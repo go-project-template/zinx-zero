@@ -16,6 +16,7 @@ services:
     working_dir: /go/src
     ports:
       - 2345:2345
+      - 2346:2346
     volumes:
       - .:/go/src
     privileged: true

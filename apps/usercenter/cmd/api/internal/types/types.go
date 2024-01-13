@@ -2,8 +2,8 @@
 package types
 
 type LoginReq struct {
-	Mobile   string `json:"mobile"`
-	Password string `json:"password"`
+	Mobile   string `json:"mobile" validate:"len=11"`
+	Password string `json:"password" validate:"min=6,max=100"`
 }
 
 type LoginResp struct {
@@ -13,8 +13,8 @@ type LoginResp struct {
 }
 
 type RegisterReq struct {
-	Mobile   string `json:"mobile"`
-	Password string `json:"password"`
+	Mobile   string `json:"mobile" validate:"len=11"`
+	Password string `json:"password" validate:"min=6,max=100"`
 }
 
 type RegisterResp struct {

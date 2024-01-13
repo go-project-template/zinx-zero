@@ -35,7 +35,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 	if err != nil {
 		return nil, err
 	}
-
+	resp = &types.LoginResp{}
 	_ = copier.Copy(resp, loginResp)
 
 	return resp, nil

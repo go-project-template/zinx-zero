@@ -18,8 +18,8 @@ type User {
 
 type (
 	RegisterReq {
-		Mobile   string `json:"mobile"`
-		Password string `json:"password"`
+		Mobile   string `json:"mobile" validate:"len=11"`
+		Password string `json:"password" validate:"min=6,max=100"`
 	}
 	RegisterResp {
 		AccessToken  string `json:"accessToken"`
@@ -30,8 +30,8 @@ type (
 
 type (
 	LoginReq {
-		Mobile   string `json:"mobile"`
-		Password string `json:"password"`
+		Mobile   string `json:"mobile" validate:"len=11"`
+		Password string `json:"password" validate:"min=6,max=100"`
 	}
 	LoginResp {
 		AccessToken  string `json:"accessToken"`

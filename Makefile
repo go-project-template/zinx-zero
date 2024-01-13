@@ -46,5 +46,7 @@ rpc:
 # 生成 model 业务代码 ， 进入"deploy/script/mysql/"目录下，执行下面命令
 model:
 	cd deploy/script/mysql/ && ./genModel.sh $(dbname) $(tables) && cp -r model/ ../../../apps/$(svc)/
+api2:
+	cd apps/usercenter/cmd/api/desc && goctl api go -api *.api -dir ../  --style=go_zero
 model2:
-	cd deploy/script/mysql/ && ./genModel.sh gamex user,user_auth && cp -r model/ ../../../apps/$(svc)/
+	cd deploy/script/mysql/ && ./genModel.sh gamex user,user_auth && cp -r model/ ../../../apps/usercenter/

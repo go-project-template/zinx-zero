@@ -39,3 +39,9 @@ jobs:
           go test ./...
           go build -v .
         working-directory: apps/usercenter/cmd/api
+
+      - name: TestUserCenterRpc
+        run: |
+          go test ./...
+          go build -v .
+        working-directory: apps/usercenter/cmd/rpc

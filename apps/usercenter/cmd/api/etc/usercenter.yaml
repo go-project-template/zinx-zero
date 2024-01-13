@@ -10,6 +10,7 @@ JwtAuth:
 Log:
   ServiceName: usercenter-api
   Level: info
+  Mode: file
 
 #WxMiniConf
 WxMiniConf:

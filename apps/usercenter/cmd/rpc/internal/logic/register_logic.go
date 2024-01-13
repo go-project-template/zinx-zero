@@ -48,18 +48,19 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 	if len(in.Password) > 0 {
 		in.Password = autils.Md5HexByString(in.Password)
 	}
+	userId, err = l.svcCtx.IDWorker.NextID()
+	if err != nil {
+		return nil, errors.Wrapf(aerr.NewErrCode(aerr.DB_ERROR), "Register user gen userId err:%v", err)
+	}
 	if err := l.svcCtx.UserModel.Trans(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		user := new(model.User)
+		user.UserId = userId
 		user.Mobile = in.Mobile
 		user.Nickname = in.Nickname
 		user.Password = in.Password
 		_, err := l.svcCtx.UserModel.Insert(ctx, session, user)
 		if err != nil {
 			return errors.Wrapf(aerr.NewErrCode(aerr.DB_ERROR), "Register db user Insert err:%v,user:%+v", err, user)
-		}
-		userId, err = l.svcCtx.IDWorker.NextID()
-		if err != nil {
-			return errors.Wrapf(aerr.NewErrCode(aerr.DB_ERROR), "Register db user IDWorker.NextID err:%v,user:%+v", err, user)
 		}
 
 		userAuth := new(model.UserAuth)

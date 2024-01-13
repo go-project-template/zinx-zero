@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-
+	"zinx-zero/apps/acommon/interceptor/rpcserver"
 	{{.imports}}
 
 	"github.com/zeromicro/go-zero/core/conf"
@@ -29,6 +29,10 @@ func main() {
 			reflection.Register(grpcServer)
 		}
 	})
+
+	//rpc log
+	s.AddUnaryInterceptors(rpcserver.LoggerInterceptor)
+
 	defer s.Stop()
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)

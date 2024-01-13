@@ -4,6 +4,7 @@ import (
 	"net/http"
 	
 	"zinx-zero/apps/acommon/result"
+	"github.com/go-playground/validator/v10"
 	"github.com/zeromicro/go-zero/rest/httpx"
 	{{.ImportPackages}}
 )
@@ -13,6 +14,12 @@ func {{.HandlerName}}(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		{{if .HasRequest}}var req types.{{.RequestType}}
 		if err := httpx.Parse(r, &req); err != nil {
 			result.ParamErrorResult(r,w,err)
+			return
+		}
+
+		if err := validator.New(validator.WithRequiredStructEnabled()).
+			StructCtx(r.Context(), &req); err != nil {
+			result.ParamErrorResult(r, w, err)
 			return
 		}
 
