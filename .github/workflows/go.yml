@@ -34,8 +34,8 @@ jobs:
             exit 1
           fi
 
-      - name: TestExample
+      - name: TestUserCenterApi
         run: |
           go test ./...
           go build -v .
-        working-directory: apps/example
+        working-directory: apps/usercenter/cmd/api
