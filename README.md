@@ -1,14 +1,14 @@
 # zinx-zero
 
-docker-modd is assist you in quickly building the project running environment.
+zinx-zero is assist you in quickly building the project running environment.
 
-## The features of docker-modd
+## The features of zinx-zero
 
 - Use Docker Compose to run the required MySQL, Redis, Nginx, and your project.
 - Use [modd.conf](modd.conf) auto compile and restart the project when changes are detected in \*. go files.
 - Use Delve -> dlv to remote debug the project, because your project runs inside Docker.
   - in vscode -> [launch.json](.vscode/launch.json)
-  - in Goland -> [.idea](.idea)
+  <!-- - in Goland -> [.idea](.idea) -->
 
 <div align=center>
 
