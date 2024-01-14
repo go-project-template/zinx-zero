@@ -5,17 +5,19 @@ version: "3"
 
 services:
   # your project
-  example:
+  gamex:
     # use by (cd deploy/gomodd && docker build -t gomodd .)
     image: gomodd:latest
-    container_name: example
+    container_name: gamex
     environment:
       # 时区上海 - Timezone Shanghai
       TZ: Asia/Shanghai
       GOPROXY: https://goproxy.cn,direct
-    working_dir: /go/src/example
+    working_dir: /go/src
+    ports:
+      - 2345:2345
     volumes:
-      - .:/go/src/example
+      - .:/go/src
     privileged: true
     restart: always
     networks:
