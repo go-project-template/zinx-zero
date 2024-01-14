@@ -36,4 +36,4 @@ zinx-zero is assist you in quickly building the project running environment.
 ## Reference
 
 - [github.com/Mikaelemmmm/gomodd](https://github.com/Mikaelemmmm/gomodd)
-- [github.com/cortesi/modd/cmd/modd](https://github.com/cortesi/modd/)
+- [github.com/cortesi/modd/modd](https://github.com/cortesi/modd/)

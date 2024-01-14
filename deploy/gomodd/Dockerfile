@@ -15,8 +15,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime &&  echo $TZ >/etc/timezone
 
 # goproxy
 RUN go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct
-RUN go install github.com/cortesi/modd/cmd/modd@latest
-RUN go install github.com/go-delve/delve/cmd/dlv@latest
+RUN go install github.com/cortesi/modd/modd@latest
+RUN go install github.com/go-delve/delve/dlv@latest
 
 WORKDIR /go/src
 
