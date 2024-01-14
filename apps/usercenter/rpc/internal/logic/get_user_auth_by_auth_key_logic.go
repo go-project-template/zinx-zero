@@ -3,9 +3,14 @@ package logic
 import (
 	"context"
 
+	"zinx-zero/apps/acommon/aerr"
+	"zinx-zero/apps/model"
 	"zinx-zero/apps/usercenter/rpc/internal/svc"
 	"zinx-zero/apps/usercenter/rpc/pb"
+	"zinx-zero/apps/usercenter/rpc/usercenter"
 
+	"github.com/jinzhu/copier"
+	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -24,7 +29,15 @@ func NewGetUserAuthByAuthKeyLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *GetUserAuthByAuthKeyLogic) GetUserAuthByAuthKey(in *pb.GetUserAuthByAuthKeyReq) (*pb.GetUserAuthByAuthKeyResp, error) {
-	// todo: add your logic here and delete this line
+	userAuth, err := l.svcCtx.UserAuthModel.FindOneByAuthTypeAuthKey(l.ctx, in.AuthType, in.AuthKey)
+	if err != nil && err != model.ErrNotFound {
+		return nil, errors.Wrapf(aerr.NewErrMsg("get user auth  fail"), "err : %v , in : %+v", err, in)
+	}
 
-	return &pb.GetUserAuthByAuthKeyResp{}, nil
+	var respUserAuth usercenter.UserAuth
+	_ = copier.Copy(&respUserAuth, userAuth)
+
+	return &pb.GetUserAuthByAuthKeyResp{
+		UserAuth: &respUserAuth,
+	}, nil
 }
