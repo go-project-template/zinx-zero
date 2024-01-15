@@ -14,19 +14,13 @@ import (
 )
 
 // Check interface implementation.
-var _ ice.IGameServer = (*gameServer)(nil)
+var _ ice.IGameServer = (*GameServer)(nil)
 
-var gameServerObj *gameServer
-
-// gameServer is a service for manage zinx server.
-type gameServer struct {
-	Server ziface.IServer
-	SvcCtx *svc.ServiceContext
-}
+var gameServerObj *GameServer
 
 func NewGameServer(svcCtx *svc.ServiceContext) ice.IGameServer {
 	syncx.Once(func() {
-		gameServerObj = new(gameServer)
+		gameServerObj = new(GameServer)
 		gameServerObj.SvcCtx = svcCtx
 	})()
 	return gameServerObj
@@ -36,8 +30,14 @@ func GetGameServer() ice.IGameServer {
 	return gameServerObj
 }
 
+// GameServer is a service for manage zinx server.
+type GameServer struct {
+	Server ziface.IServer
+	SvcCtx *svc.ServiceContext
+}
+
 // Start runs the server
-func (m *gameServer) Start() {
+func (m *GameServer) Start() {
 	var zinxConf = new(zconf.Config)
 	copier.Copy(zinxConf, m.SvcCtx.Config.ZinxConf)
 
@@ -53,11 +53,11 @@ func (m *gameServer) Start() {
 }
 
 // Stop stops the server.
-func (m *gameServer) Stop() {
+func (m *GameServer) Stop() {
 	m.Server.Stop()
 }
 
 // GetServiceContext implements ice.IGameServer.
-func (a *gameServer) GetServiceContext() *svc.ServiceContext {
+func (a *GameServer) GetServiceContext() *svc.ServiceContext {
 	return a.SvcCtx
 }
