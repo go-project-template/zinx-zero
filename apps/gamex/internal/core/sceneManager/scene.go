@@ -1,4 +1,4 @@
-package sceneManage
+package sceneManager
 
 import (
 	"zinx-zero/apps/gamex/internal/ice"

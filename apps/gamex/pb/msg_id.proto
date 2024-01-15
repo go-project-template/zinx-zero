@@ -6,6 +6,8 @@ package pb;
 
 enum MSG {
   Placeholder = 0;
-  C2SLogin_ID = 1;
-  S2CLogin_ID = 2;
+  SyncPID_ID = 1;
+  BroadCast_ID = 200;
+  SyncPID201_ID = 201;
+  SyncPlayers_ID = 202;
 }

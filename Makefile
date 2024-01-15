@@ -32,7 +32,7 @@ restart:
 down:
 	docker compose -p my_project down
 
-proto:
+pb:
 	cd apps/gamex/pb && ./build.sh
 
 # 生成 api 业务代码 ， 进入"服务/api/desc"目录下，执行下面命令

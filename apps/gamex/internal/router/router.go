@@ -1,11 +1,15 @@
 package router
 
 import (
-	"zinx-zero/apps/gamex/internal/router/user"
-
 	"github.com/aceld/zinx/ziface"
+	"github.com/aceld/zinx/zinx_app_demo/mmo_game/api"
 )
 
 func RegisterHandlers(server ziface.IServer) {
-	user.RegisterUserHandlers(server) // register user handlers
+
+	// Register routers
+	server.AddRouter(2, &api.WorldChatApi{})
+	server.AddRouter(3, &api.MoveApi{})
+
+	// user.RegisterUserHandlers(server) // register user handlers
 }
