@@ -1,0 +1,41 @@
+name: Go
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-linux:
+    name: Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v4
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21
+          check-latest: true
+        id: go
+
+      - name: Get dependencies
+        run: |
+          go get -v -t -d ./...
+
+      - name: Lint
+        run: |
+          go vet -stdmethods=false $(go list ./...)
+          go mod tidy
+          if ! test -z "$(git status --porcelain)"; then
+            echo "Please run 'go mod tidy'"
+            exit 1
+          fi
+
+      - name: TestExample
+        run: |
+          go test ./...
+          go build -v .
+        working-directory: apps/example

@@ -1,0 +1,29 @@
+version: "3"
+
+# Before starting this project,
+# start the environment that the project depends on docker-compose-env.yml
+
+services:
+  # your project
+  example:
+    # use by (cd deploy/gomodd && docker build -t gomodd .)
+    image: gomodd:latest
+    container_name: example
+    environment:
+      # 时区上海 - Timezone Shanghai
+      TZ: Asia/Shanghai
+      GOPROXY: https://goproxy.cn,direct
+    working_dir: /go/src/example
+    volumes:
+      - .:/go/src/example
+    privileged: true
+    restart: always
+    networks:
+      - my_net
+
+networks:
+  my_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
