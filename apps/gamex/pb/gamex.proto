@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package pb;
+
+// 1. 去登录服获取 getlogininfo
+
+message C2SLogin {
+  int64 AccountId = 2;
+  string Token = 3;
+  int64 UserId = 4;
+  int64 Timestamp = 7;
+}
+message S2CLogin {
+  int32 Tag = 1;
+  int32 UserId = 2;
+  int32 CpsMoneyOpen = 6; // 渠道计费点开关 1开启 0关闭
+}

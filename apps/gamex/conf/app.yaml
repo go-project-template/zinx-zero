@@ -1,5 +1,6 @@
 # go-zero config
 Name: GameX
+ListenOn: 0.0.0.0:9000
 Mode: dev
 
 Log:

@@ -21,6 +21,15 @@
       "remotePath": "/go/src",
       "port": 2346,
       "host": "127.0.0.1"
+    },
+    {
+      "name": "gamex",
+      "type": "go",
+      "request": "attach",
+      "mode": "remote",
+      "remotePath": "/go/src",
+      "port": 2347,
+      "host": "127.0.0.1"
     }
   ]
 }

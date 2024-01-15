@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package pb;
+
+enum MSG {
+  Placeholder = 0;
+  C2SLogin_ID = 1;
+  S2CLogin_ID = 2;
+}
