@@ -21,8 +21,6 @@ data/*
 # mac
 **/.DS_Store
 
-**/**.log
-
 go.sum
-
-todo.md
+**/**.log
+**/pb/**.go
