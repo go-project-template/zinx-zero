@@ -1,4 +1,4 @@
-package playerManage
+package playerManager
 
 import (
 	"errors"
