@@ -77,7 +77,7 @@ func (a *GameServer) GetServiceContext() *svc.ServiceContext {
 }
 
 func OnConnectionAdd(conn ziface.IConnection) {
-	GetGameServer().GetServiceContext()
+	GetGameServer().GetServiceContext().Config
 	playerManager.GetPlayerManager().NewPlayer()
 }
 func OnConnectionLost(conn ziface.IConnection) {
