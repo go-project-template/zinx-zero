@@ -51,7 +51,7 @@ rpc:
 # 生成 model 业务代码 ， 进入"deploy/script/mysql/"目录下，执行下面命令
 model:
 	cd deploy/script/mysql/ && ./genModel.sh $(dbname) $(tables) && \
-	cp -r model/ $(PROJECT_DIR)/apps/$(svc)/
+	cp -r model/ $(PROJECT_DIR)/apps
 
 api2:
 	cd apps/usercenter/api/desc && goctl api go -api *.api -dir=../ \
@@ -62,5 +62,5 @@ rpc2:
 	-home=$(PROJECT_DIR)/deploy/goctl/1.6.1/ --zrpc_out=../ --style=go_zero && \
 	sed -i 's/,omitempty//g' *.pb.go
 model2:
-	cd deploy/script/mysql/ && ./genModel.sh gamex user,user_auth && \
-	cp -r model/ $(PROJECT_DIR)/apps/usercenter/
+	cd deploy/script/mysql/ && ./genModel.sh gamex user_account,user_account_auth,user_role,user_roleid_pool && \
+	cp -r model/ $(PROJECT_DIR)/apps
