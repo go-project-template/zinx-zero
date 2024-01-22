@@ -29,25 +29,25 @@ type PlayerManager struct {
 }
 
 // NewPlayer implements ice.IPlayerManager.
-func (*PlayerManager) NewPlayer(userId int64) (player ice.IPlayer) {
+func (*PlayerManager) NewPlayer(accountId int64) (player ice.IPlayer) {
 	player = &Player{}
-	player.SetUserId(userId)
+	player.SetAccountId(accountId)
 	return player
 }
 
 // AddPlayer implements ice.IPlayerManager.
 func (a *PlayerManager) AddPlayer(player ice.IPlayer) {
-	a.playerMap.Set(player.GetUserIdStr(), player)
-	logx.Infof("player add to playerManager successfully: %v", player.GetUserId())
+	a.playerMap.Set(player.GetAccountIdStr(), player)
+	logx.Infof("player add to playerManager successfully: %v", player.GetAccountId())
 }
 
-// GetPlayerByUserId implements ice.IPlayerManager.
-func (a *PlayerManager) GetPlayerByUserId(userId int64) (player ice.IPlayer, err error) {
-	return a.GetPlayerByUserIdStr(cast.ToString(userId))
+// GetPlayerByAccountId implements ice.IPlayerManager.
+func (a *PlayerManager) GetPlayerByAccountId(accountId int64) (player ice.IPlayer, err error) {
+	return a.GetPlayerByAccountIdStr(cast.ToString(accountId))
 }
 
-// GetPlayerByUserIdStr implements ice.IPlayerManager.
-func (a *PlayerManager) GetPlayerByUserIdStr(userIdStr string) (player ice.IPlayer, err error) {
+// GetPlayerByAccountIdStr implements ice.IPlayerManager.
+func (a *PlayerManager) GetPlayerByAccountIdStr(userIdStr string) (player ice.IPlayer, err error) {
 	if conn, ok := a.playerMap.Get(userIdStr); ok {
 		return conn.(ice.IPlayer), nil
 	}
@@ -56,6 +56,6 @@ func (a *PlayerManager) GetPlayerByUserIdStr(userIdStr string) (player ice.IPlay
 
 // RemovePlayer implements ice.IPlayerManager.
 func (a *PlayerManager) RemovePlayer(player ice.IPlayer) {
-	a.playerMap.Remove(player.GetUserIdStr())
-	logx.Infof("player Remove userId=%d successfully", player.GetUserId())
+	a.playerMap.Remove(player.GetAccountIdStr())
+	logx.Infof("player Remove accountId=%d successfully", player.GetAccountId())
 }

@@ -26,17 +26,17 @@ var (
 	userAccountAuthRowsExpectAutoSet   = strings.Join(stringx.Remove(userAccountAuthFieldNames, "`id`", "`create_time`", "`update_time`"), ",")
 	userAccountAuthRowsWithPlaceHolder = strings.Join(stringx.Remove(userAccountAuthFieldNames, "`id`", "`create_time`", "`update_time`"), "=?,") + "=?"
 
-	cacheGamexUserAccountAuthIdPrefix              = "cache:gamex:userAccountAuth:id:"
-	cacheGamexUserAccountAuthAuthTypeAuthKeyPrefix = "cache:gamex:userAccountAuth:authType:authKey:"
-	cacheGamexUserAccountAuthUserIdAuthTypePrefix  = "cache:gamex:userAccountAuth:userId:authType:"
+	cacheGamexUserAccountAuthIdPrefix                = "cache:gamex:userAccountAuth:id:"
+	cacheGamexUserAccountAuthAccountIdAuthTypePrefix = "cache:gamex:userAccountAuth:accountId:authType:"
+	cacheGamexUserAccountAuthAuthTypeAuthKeyPrefix   = "cache:gamex:userAccountAuth:authType:authKey:"
 )
 
 type (
 	userAccountAuthModel interface {
 		Insert(ctx context.Context, session sqlx.Session, data *UserAccountAuth) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*UserAccountAuth, error)
+		FindOneByAccountIdAuthType(ctx context.Context, accountId int64, authType string) (*UserAccountAuth, error)
 		FindOneByAuthTypeAuthKey(ctx context.Context, authType string, authKey string) (*UserAccountAuth, error)
-		FindOneByUserIdAuthType(ctx context.Context, userId int64, authType string) (*UserAccountAuth, error)
 		Update(ctx context.Context, session sqlx.Session, data *UserAccountAuth) (sql.Result, error)
 		UpdateWithVersion(ctx context.Context, session sqlx.Session, data *UserAccountAuth) error
 		Trans(ctx context.Context, fn func(context context.Context, session sqlx.Session) error) error
@@ -64,7 +64,7 @@ type (
 		DeleteTime time.Time `db:"delete_time"`
 		DelState   int64     `db:"del_state"`
 		Version    int64     `db:"version"` // 版本号
-		UserId     int64     `db:"user_id"`
+		AccountId  int64     `db:"account_id"`
 		AuthKey    string    `db:"auth_key"`  // 平台唯一id
 		AuthType   string    `db:"auth_type"` // 平台类型
 	}
@@ -80,16 +80,16 @@ func newUserAccountAuthModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache
 func (m *defaultUserAccountAuthModel) Insert(ctx context.Context, session sqlx.Session, data *UserAccountAuth) (sql.Result, error) {
 	data.DeleteTime = time.Unix(0, 0)
 	data.DelState = globalkey.Sql_DelStateNo
+	gamexUserAccountAuthAccountIdAuthTypeKey := fmt.Sprintf("%s%v:%v", cacheGamexUserAccountAuthAccountIdAuthTypePrefix, data.AccountId, data.AuthType)
 	gamexUserAccountAuthAuthTypeAuthKeyKey := fmt.Sprintf("%s%v:%v", cacheGamexUserAccountAuthAuthTypeAuthKeyPrefix, data.AuthType, data.AuthKey)
 	gamexUserAccountAuthIdKey := fmt.Sprintf("%s%v", cacheGamexUserAccountAuthIdPrefix, data.Id)
-	gamexUserAccountAuthUserIdAuthTypeKey := fmt.Sprintf("%s%v:%v", cacheGamexUserAccountAuthUserIdAuthTypePrefix, data.UserId, data.AuthType)
 	return m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, userAccountAuthRowsExpectAutoSet)
 		if session != nil {
-			return session.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.Version, data.UserId, data.AuthKey, data.AuthType)
+			return session.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.Version, data.AccountId, data.AuthKey, data.AuthType)
 		}
-		return conn.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.Version, data.UserId, data.AuthKey, data.AuthType)
-	}, gamexUserAccountAuthAuthTypeAuthKeyKey, gamexUserAccountAuthIdKey, gamexUserAccountAuthUserIdAuthTypeKey)
+		return conn.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.Version, data.AccountId, data.AuthKey, data.AuthType)
+	}, gamexUserAccountAuthAccountIdAuthTypeKey, gamexUserAccountAuthAuthTypeAuthKeyKey, gamexUserAccountAuthIdKey)
 }
 
 func (m *defaultUserAccountAuthModel) FindOne(ctx context.Context, id int64) (*UserAccountAuth, error) {
@@ -99,6 +99,26 @@ func (m *defaultUserAccountAuthModel) FindOne(ctx context.Context, id int64) (*U
 		query := fmt.Sprintf("select %s from %s where `id` = ? and del_state = ? limit 1", userAccountAuthRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id, globalkey.Sql_DelStateNo)
 	})
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultUserAccountAuthModel) FindOneByAccountIdAuthType(ctx context.Context, accountId int64, authType string) (*UserAccountAuth, error) {
+	gamexUserAccountAuthAccountIdAuthTypeKey := fmt.Sprintf("%s%v:%v", cacheGamexUserAccountAuthAccountIdAuthTypePrefix, accountId, authType)
+	var resp UserAccountAuth
+	err := m.QueryRowIndexCtx(ctx, &resp, gamexUserAccountAuthAccountIdAuthTypeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) (i interface{}, e error) {
+		query := fmt.Sprintf("select %s from %s where `account_id` = ? and `auth_type` = ? and del_state = ? limit 1", userAccountAuthRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, accountId, authType, globalkey.Sql_DelStateNo); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
 	switch err {
 	case nil:
 		return &resp, nil
@@ -129,41 +149,21 @@ func (m *defaultUserAccountAuthModel) FindOneByAuthTypeAuthKey(ctx context.Conte
 	}
 }
 
-func (m *defaultUserAccountAuthModel) FindOneByUserIdAuthType(ctx context.Context, userId int64, authType string) (*UserAccountAuth, error) {
-	gamexUserAccountAuthUserIdAuthTypeKey := fmt.Sprintf("%s%v:%v", cacheGamexUserAccountAuthUserIdAuthTypePrefix, userId, authType)
-	var resp UserAccountAuth
-	err := m.QueryRowIndexCtx(ctx, &resp, gamexUserAccountAuthUserIdAuthTypeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) (i interface{}, e error) {
-		query := fmt.Sprintf("select %s from %s where `user_id` = ? and `auth_type` = ? and del_state = ? limit 1", userAccountAuthRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, userId, authType, globalkey.Sql_DelStateNo); err != nil {
-			return nil, err
-		}
-		return resp.Id, nil
-	}, m.queryPrimary)
-	switch err {
-	case nil:
-		return &resp, nil
-	case sqlc.ErrNotFound:
-		return nil, ErrNotFound
-	default:
-		return nil, err
-	}
-}
-
 func (m *defaultUserAccountAuthModel) Update(ctx context.Context, session sqlx.Session, newData *UserAccountAuth) (sql.Result, error) {
 	data, err := m.FindOne(ctx, newData.Id)
 	if err != nil {
 		return nil, err
 	}
+	gamexUserAccountAuthAccountIdAuthTypeKey := fmt.Sprintf("%s%v:%v", cacheGamexUserAccountAuthAccountIdAuthTypePrefix, data.AccountId, data.AuthType)
 	gamexUserAccountAuthAuthTypeAuthKeyKey := fmt.Sprintf("%s%v:%v", cacheGamexUserAccountAuthAuthTypeAuthKeyPrefix, data.AuthType, data.AuthKey)
 	gamexUserAccountAuthIdKey := fmt.Sprintf("%s%v", cacheGamexUserAccountAuthIdPrefix, data.Id)
-	gamexUserAccountAuthUserIdAuthTypeKey := fmt.Sprintf("%s%v:%v", cacheGamexUserAccountAuthUserIdAuthTypePrefix, data.UserId, data.AuthType)
 	return m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, userAccountAuthRowsWithPlaceHolder)
 		if session != nil {
-			return session.ExecCtx(ctx, query, newData.DeleteTime, newData.DelState, newData.Version, newData.UserId, newData.AuthKey, newData.AuthType, newData.Id)
+			return session.ExecCtx(ctx, query, newData.DeleteTime, newData.DelState, newData.Version, newData.AccountId, newData.AuthKey, newData.AuthType, newData.Id)
 		}
-		return conn.ExecCtx(ctx, query, newData.DeleteTime, newData.DelState, newData.Version, newData.UserId, newData.AuthKey, newData.AuthType, newData.Id)
-	}, gamexUserAccountAuthAuthTypeAuthKeyKey, gamexUserAccountAuthIdKey, gamexUserAccountAuthUserIdAuthTypeKey)
+		return conn.ExecCtx(ctx, query, newData.DeleteTime, newData.DelState, newData.Version, newData.AccountId, newData.AuthKey, newData.AuthType, newData.Id)
+	}, gamexUserAccountAuthAccountIdAuthTypeKey, gamexUserAccountAuthAuthTypeAuthKeyKey, gamexUserAccountAuthIdKey)
 }
 
 func (m *defaultUserAccountAuthModel) UpdateWithVersion(ctx context.Context, session sqlx.Session, newData *UserAccountAuth) error {
@@ -178,16 +178,16 @@ func (m *defaultUserAccountAuthModel) UpdateWithVersion(ctx context.Context, ses
 	if err != nil {
 		return err
 	}
+	gamexUserAccountAuthAccountIdAuthTypeKey := fmt.Sprintf("%s%v:%v", cacheGamexUserAccountAuthAccountIdAuthTypePrefix, data.AccountId, data.AuthType)
 	gamexUserAccountAuthAuthTypeAuthKeyKey := fmt.Sprintf("%s%v:%v", cacheGamexUserAccountAuthAuthTypeAuthKeyPrefix, data.AuthType, data.AuthKey)
 	gamexUserAccountAuthIdKey := fmt.Sprintf("%s%v", cacheGamexUserAccountAuthIdPrefix, data.Id)
-	gamexUserAccountAuthUserIdAuthTypeKey := fmt.Sprintf("%s%v:%v", cacheGamexUserAccountAuthUserIdAuthTypePrefix, data.UserId, data.AuthType)
 	sqlResult, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ? and version = ? ", m.table, userAccountAuthRowsWithPlaceHolder)
 		if session != nil {
-			return session.ExecCtx(ctx, query, newData.DeleteTime, newData.DelState, newData.Version, newData.UserId, newData.AuthKey, newData.AuthType, newData.Id, oldVersion)
+			return session.ExecCtx(ctx, query, newData.DeleteTime, newData.DelState, newData.Version, newData.AccountId, newData.AuthKey, newData.AuthType, newData.Id, oldVersion)
 		}
-		return conn.ExecCtx(ctx, query, newData.DeleteTime, newData.DelState, newData.Version, newData.UserId, newData.AuthKey, newData.AuthType, newData.Id, oldVersion)
-	}, gamexUserAccountAuthAuthTypeAuthKeyKey, gamexUserAccountAuthIdKey, gamexUserAccountAuthUserIdAuthTypeKey)
+		return conn.ExecCtx(ctx, query, newData.DeleteTime, newData.DelState, newData.Version, newData.AccountId, newData.AuthKey, newData.AuthType, newData.Id, oldVersion)
+	}, gamexUserAccountAuthAccountIdAuthTypeKey, gamexUserAccountAuthAuthTypeAuthKeyKey, gamexUserAccountAuthIdKey)
 	if err != nil {
 		return err
 	}
@@ -410,16 +410,16 @@ func (m *defaultUserAccountAuthModel) Delete(ctx context.Context, session sqlx.S
 		return err
 	}
 
+	gamexUserAccountAuthAccountIdAuthTypeKey := fmt.Sprintf("%s%v:%v", cacheGamexUserAccountAuthAccountIdAuthTypePrefix, data.AccountId, data.AuthType)
 	gamexUserAccountAuthAuthTypeAuthKeyKey := fmt.Sprintf("%s%v:%v", cacheGamexUserAccountAuthAuthTypeAuthKeyPrefix, data.AuthType, data.AuthKey)
 	gamexUserAccountAuthIdKey := fmt.Sprintf("%s%v", cacheGamexUserAccountAuthIdPrefix, id)
-	gamexUserAccountAuthUserIdAuthTypeKey := fmt.Sprintf("%s%v:%v", cacheGamexUserAccountAuthUserIdAuthTypePrefix, data.UserId, data.AuthType)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		if session != nil {
 			return session.ExecCtx(ctx, query, id)
 		}
 		return conn.ExecCtx(ctx, query, id)
-	}, gamexUserAccountAuthAuthTypeAuthKeyKey, gamexUserAccountAuthIdKey, gamexUserAccountAuthUserIdAuthTypeKey)
+	}, gamexUserAccountAuthAccountIdAuthTypeKey, gamexUserAccountAuthAuthTypeAuthKeyKey, gamexUserAccountAuthIdKey)
 	return err
 }
 func (m *defaultUserAccountAuthModel) formatPrimary(primary interface{}) string {

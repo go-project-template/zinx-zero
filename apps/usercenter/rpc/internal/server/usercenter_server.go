@@ -42,9 +42,9 @@ func (s *UsercenterServer) GetUserAuthByAuthKey(ctx context.Context, in *pb.GetU
 	return l.GetUserAuthByAuthKey(in)
 }
 
-func (s *UsercenterServer) GetUserAuthByUserId(ctx context.Context, in *pb.GetUserAuthByUserIdReq) (*pb.GetUserAuthyUserIdResp, error) {
-	l := logic.NewGetUserAuthByUserIdLogic(ctx, s.svcCtx)
-	return l.GetUserAuthByUserId(in)
+func (s *UsercenterServer) GetUserAuthByAccountId(ctx context.Context, in *pb.GetUserAuthByAccountIdReq) (*pb.GetUserAuthyAccountIdResp, error) {
+	l := logic.NewGetUserAuthByAccountIdLogic(ctx, s.svcCtx)
+	return l.GetUserAuthByAccountId(in)
 }
 
 func (s *UsercenterServer) GenerateToken(ctx context.Context, in *pb.GenerateTokenReq) (*pb.GenerateTokenResp, error) {

@@ -24,12 +24,8 @@ type RegisterResp struct {
 }
 
 type User struct {
-	UserId   int64  `json:"user_id"`
-	Mobile   string `json:"mobile"`
-	Nickname string `json:"nickname"`
-	Sex      int64  `json:"sex"`
-	Avatar   string `json:"avatar"`
-	Info     string `json:"info"`
+	AccountId int64  `json:"account_id"`
+	Mobile    string `json:"mobile"`
 }
 
 type UserInfoReq struct {

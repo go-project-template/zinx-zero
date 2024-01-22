@@ -17,8 +17,8 @@ type ServiceContext struct {
 
 	RedisClient *redis.Redis
 
-	UserModel     model.UserModel
-	UserAuthModel model.UserAuthModel
+	UserAccountModel     model.UserAccountModel
+	UserAccountAuthModel model.UserAccountAuthModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -32,7 +32,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		IDWorker:    idWorker,
 		RedisClient: redis.MustNewRedis(c.Redis.RedisConf),
 
-		UserAuthModel: model.NewUserAuthModel(sqlConn, c.Cache),
-		UserModel:     model.NewUserModel(sqlConn, c.Cache),
+		UserAccountModel:     model.NewUserAccountModel(sqlConn, c.Cache),
+		UserAccountAuthModel: model.NewUserAccountAuthModel(sqlConn, c.Cache),
 	}
 }

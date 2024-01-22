@@ -7,10 +7,10 @@ package pb;
 message C2SLogin {
   int64 AccountId = 2;
   string Token = 3;
-  int64 UserId = 4;
+  int64 AccountId = 4;
   int64 Timestamp = 7;
 }
 message S2CLogin {
   int32 Tag = 1;
-  int32 UserId = 2;
+  int32 AccountId = 2;
 }

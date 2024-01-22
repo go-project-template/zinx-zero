@@ -10,7 +10,7 @@ import (
 var _ ice.IPlayer = (*Player)(nil)
 
 type Player struct {
-	userId    int64
+	accountId int64
 	userIdStr string
 	nickname  string
 }
@@ -20,20 +20,20 @@ func (a *Player) GetNickname() string {
 	return a.nickname
 }
 
-// GetUserId implements ice.IPlayer.
-func (a *Player) GetUserId() int64 {
-	return a.userId
+// GetAccountId implements ice.IPlayer.
+func (a *Player) GetAccountId() int64 {
+	return a.accountId
 }
 
-// GetUserIdStr implements ice.IPlayer.
-func (a *Player) GetUserIdStr() (userIdStr string) {
+// GetAccountIdStr implements ice.IPlayer.
+func (a *Player) GetAccountIdStr() (userIdStr string) {
 	return a.userIdStr
 }
 
-// SetUserId implements ice.IPlayer.
-func (a *Player) SetUserId(userId int64) {
-	a.userId = userId
-	a.userIdStr = cast.ToString(userId)
+// SetAccountId implements ice.IPlayer.
+func (a *Player) SetAccountId(accountId int64) {
+	a.accountId = accountId
+	a.userIdStr = cast.ToString(accountId)
 }
 
 // SetNickname implements ice.IPlayer.

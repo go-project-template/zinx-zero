@@ -19,12 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Usercenter_Login_FullMethodName                = "/pb.usercenter/login"
-	Usercenter_Register_FullMethodName             = "/pb.usercenter/register"
-	Usercenter_GetUserInfo_FullMethodName          = "/pb.usercenter/getUserInfo"
-	Usercenter_GetUserAuthByAuthKey_FullMethodName = "/pb.usercenter/getUserAuthByAuthKey"
-	Usercenter_GetUserAuthByUserId_FullMethodName  = "/pb.usercenter/getUserAuthByUserId"
-	Usercenter_GenerateToken_FullMethodName        = "/pb.usercenter/generateToken"
+	Usercenter_Login_FullMethodName                  = "/pb.usercenter/login"
+	Usercenter_Register_FullMethodName               = "/pb.usercenter/register"
+	Usercenter_GetUserInfo_FullMethodName            = "/pb.usercenter/getUserInfo"
+	Usercenter_GetUserAuthByAuthKey_FullMethodName   = "/pb.usercenter/getUserAuthByAuthKey"
+	Usercenter_GetUserAuthByAccountId_FullMethodName = "/pb.usercenter/getUserAuthByAccountId"
+	Usercenter_GenerateToken_FullMethodName          = "/pb.usercenter/generateToken"
 )
 
 // UsercenterClient is the client API for Usercenter service.
@@ -35,7 +35,7 @@ type UsercenterClient interface {
 	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
 	GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error)
 	GetUserAuthByAuthKey(ctx context.Context, in *GetUserAuthByAuthKeyReq, opts ...grpc.CallOption) (*GetUserAuthByAuthKeyResp, error)
-	GetUserAuthByUserId(ctx context.Context, in *GetUserAuthByUserIdReq, opts ...grpc.CallOption) (*GetUserAuthyUserIdResp, error)
+	GetUserAuthByAccountId(ctx context.Context, in *GetUserAuthByAccountIdReq, opts ...grpc.CallOption) (*GetUserAuthyAccountIdResp, error)
 	GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...grpc.CallOption) (*GenerateTokenResp, error)
 }
 
@@ -83,9 +83,9 @@ func (c *usercenterClient) GetUserAuthByAuthKey(ctx context.Context, in *GetUser
 	return out, nil
 }
 
-func (c *usercenterClient) GetUserAuthByUserId(ctx context.Context, in *GetUserAuthByUserIdReq, opts ...grpc.CallOption) (*GetUserAuthyUserIdResp, error) {
-	out := new(GetUserAuthyUserIdResp)
-	err := c.cc.Invoke(ctx, Usercenter_GetUserAuthByUserId_FullMethodName, in, out, opts...)
+func (c *usercenterClient) GetUserAuthByAccountId(ctx context.Context, in *GetUserAuthByAccountIdReq, opts ...grpc.CallOption) (*GetUserAuthyAccountIdResp, error) {
+	out := new(GetUserAuthyAccountIdResp)
+	err := c.cc.Invoke(ctx, Usercenter_GetUserAuthByAccountId_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +109,7 @@ type UsercenterServer interface {
 	Register(context.Context, *RegisterReq) (*RegisterResp, error)
 	GetUserInfo(context.Context, *GetUserInfoReq) (*GetUserInfoResp, error)
 	GetUserAuthByAuthKey(context.Context, *GetUserAuthByAuthKeyReq) (*GetUserAuthByAuthKeyResp, error)
-	GetUserAuthByUserId(context.Context, *GetUserAuthByUserIdReq) (*GetUserAuthyUserIdResp, error)
+	GetUserAuthByAccountId(context.Context, *GetUserAuthByAccountIdReq) (*GetUserAuthyAccountIdResp, error)
 	GenerateToken(context.Context, *GenerateTokenReq) (*GenerateTokenResp, error)
 	mustEmbedUnimplementedUsercenterServer()
 }
@@ -130,8 +130,8 @@ func (UnimplementedUsercenterServer) GetUserInfo(context.Context, *GetUserInfoRe
 func (UnimplementedUsercenterServer) GetUserAuthByAuthKey(context.Context, *GetUserAuthByAuthKeyReq) (*GetUserAuthByAuthKeyResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserAuthByAuthKey not implemented")
 }
-func (UnimplementedUsercenterServer) GetUserAuthByUserId(context.Context, *GetUserAuthByUserIdReq) (*GetUserAuthyUserIdResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserAuthByUserId not implemented")
+func (UnimplementedUsercenterServer) GetUserAuthByAccountId(context.Context, *GetUserAuthByAccountIdReq) (*GetUserAuthyAccountIdResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserAuthByAccountId not implemented")
 }
 func (UnimplementedUsercenterServer) GenerateToken(context.Context, *GenerateTokenReq) (*GenerateTokenResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateToken not implemented")
@@ -221,20 +221,20 @@ func _Usercenter_GetUserAuthByAuthKey_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Usercenter_GetUserAuthByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserAuthByUserIdReq)
+func _Usercenter_GetUserAuthByAccountId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserAuthByAccountIdReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UsercenterServer).GetUserAuthByUserId(ctx, in)
+		return srv.(UsercenterServer).GetUserAuthByAccountId(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Usercenter_GetUserAuthByUserId_FullMethodName,
+		FullMethod: Usercenter_GetUserAuthByAccountId_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsercenterServer).GetUserAuthByUserId(ctx, req.(*GetUserAuthByUserIdReq))
+		return srv.(UsercenterServer).GetUserAuthByAccountId(ctx, req.(*GetUserAuthByAccountIdReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -281,8 +281,8 @@ var Usercenter_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Usercenter_GetUserAuthByAuthKey_Handler,
 		},
 		{
-			MethodName: "getUserAuthByUserId",
-			Handler:    _Usercenter_GetUserAuthByUserId_Handler,
+			MethodName: "getUserAuthByAccountId",
+			Handler:    _Usercenter_GetUserAuthByAccountId_Handler,
 		},
 		{
 			MethodName: "generateToken",
