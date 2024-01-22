@@ -5,12 +5,8 @@ option go_package = ".";
 package pb;
 
 message C2SLogin {
-  int64 AccountId = 2;
-  string Token = 3;
-  int64 AccountId = 4;
-  int64 Timestamp = 7;
+  int64 AccountId = 1;
+  string Token = 2;
+  string RoleId = 3;
 }
-message S2CLogin {
-  int32 Tag = 1;
-  int32 AccountId = 2;
-}
+message S2CLogin { int32 Tag = 1; }
