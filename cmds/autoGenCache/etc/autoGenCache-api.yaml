@@ -1,0 +1,11 @@
+Name: autoGenCache.rpc
+ListenOn: 0.0.0.0:2004
+Mode: dev
+
+DB:
+  DataSource: root:PXDN93VRKUm8TeE7@tcp(localhost:33069)/gamex?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+
+Cache:
+  - Host: localhost:36379
+    Pass: G62m50oigInC30sf
+    NonBlock: false

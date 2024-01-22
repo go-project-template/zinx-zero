@@ -17,7 +17,7 @@ type response {
 
 service {{.serviceName}} {
 	@handler GetUser // TODO: set handler name and delete this comment
-	get /users/id/:userId(request) returns(response)
+	get /users/id/:accountId(request) returns(response)
 
 	@handler CreateUser // TODO: set handler name and delete this comment
 	post /users/create(request)

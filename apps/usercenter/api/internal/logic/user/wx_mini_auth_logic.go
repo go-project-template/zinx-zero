@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"fmt"
 
 	"zinx-zero/apps/acommon/aerr"
 	"zinx-zero/apps/acommon/globalkey"
@@ -54,7 +53,7 @@ func (l *WxMiniAuthLogic) WxMiniAuth(req *types.WXMiniAuthReq) (resp *types.WXMi
 	}
 
 	//3、bind user or login.
-	var userId int64
+	var accountId int64
 	rpcRsp, err := l.svcCtx.UsercenterRpc.GetUserAuthByAuthKey(l.ctx, &usercenter.GetUserAuthByAuthKeyReq{
 		AuthType: globalkey.Model_UserAuthTypeSmallWX,
 		AuthKey:  authResult.OpenID,
@@ -62,17 +61,15 @@ func (l *WxMiniAuthLogic) WxMiniAuth(req *types.WXMiniAuthReq) (resp *types.WXMi
 	if err != nil {
 		return nil, errors.Wrapf(ErrWxMiniAuthFailError, "rpc call userAuthByAuthKey err : %v , authResult : %+v", err, authResult)
 	}
-	if rpcRsp.UserAuth == nil || rpcRsp.UserAuth.UserId == 0 {
+	if rpcRsp.UserAuth == nil || rpcRsp.UserAuth.AccountId == 0 {
 		//bind user.
 
 		//Wechat-Mini Decrypted data
 		mobile := userData.PhoneNumber
-		nickName := fmt.Sprintf("LookLook%s", mobile[7:])
 		registerRsp, err := l.svcCtx.UsercenterRpc.Register(l.ctx, &usercenter.RegisterReq{
 			AuthKey:  authResult.OpenID,
 			AuthType: globalkey.Model_UserAuthTypeSmallWX,
 			Mobile:   mobile,
-			Nickname: nickName,
 		})
 		if err != nil {
 			return nil, errors.Wrapf(ErrWxMiniAuthFailError, "UsercenterRpc.Register err :%v, authResult : %+v", err, authResult)
@@ -85,12 +82,12 @@ func (l *WxMiniAuthLogic) WxMiniAuth(req *types.WXMiniAuthReq) (resp *types.WXMi
 		}, nil
 
 	} else {
-		userId = rpcRsp.UserAuth.UserId
+		accountId = rpcRsp.UserAuth.AccountId
 		tokenResp, err := l.svcCtx.UsercenterRpc.GenerateToken(l.ctx, &usercenter.GenerateTokenReq{
-			UserId: userId,
+			AccountId: accountId,
 		})
 		if err != nil {
-			return nil, errors.Wrapf(ErrWxMiniAuthFailError, "usercenterRpc.GenerateToken err :%v, userId : %d", err, userId)
+			return nil, errors.Wrapf(ErrWxMiniAuthFailError, "usercenterRpc.GenerateToken err :%v, accountId : %d", err, accountId)
 		}
 		return &types.WXMiniAuthResp{
 			AccessToken:  tokenResp.AccessToken,

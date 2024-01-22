@@ -20,12 +20,6 @@ var _ ice.IGameServer = (*GameServer)(nil)
 
 var gameServerObj *GameServer
 
-// GameServer is a service for manage zinx server.
-type GameServer struct {
-	Server ziface.IServer
-	SvcCtx *svc.ServiceContext
-}
-
 func NewGameServer(svcCtx *svc.ServiceContext) ice.IGameServer {
 	syncx.Once(func() {
 		gameServerObj = new(GameServer)
@@ -36,6 +30,12 @@ func NewGameServer(svcCtx *svc.ServiceContext) ice.IGameServer {
 
 func GetGameServer() ice.IGameServer {
 	return gameServerObj
+}
+
+// GameServer is a service for manage zinx server.
+type GameServer struct {
+	Server ziface.IServer
+	SvcCtx *svc.ServiceContext
 }
 
 // Start runs the server

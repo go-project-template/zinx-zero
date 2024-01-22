@@ -8,12 +8,8 @@ info(
 )
 
 type User {
-	UserId   int64  `json:"user_id"`
-	Mobile   string `json:"mobile"`
-	Nickname string `json:"nickname"`
-	Sex      int64  `json:"sex"`
-	Avatar   string `json:"avatar"`
-	Info     string `json:"info"`
+	AccountId int64  `json:"account_id"`
+	Mobile    string `json:"mobile"`
 }
 
 type (
@@ -58,5 +54,15 @@ type (
 	}
 	UserInfoResp {
 		UserInfo User `json:"userInfo"`
+	}
+)
+
+type (
+	CreateRoleReq {
+		Nickname string `json:"nickname"`
+		Sex      int32  `json:"sex"`
+	}
+	CreateRoleResp {
+		RoleId int64 `json:"role_id"`
 	}
 )

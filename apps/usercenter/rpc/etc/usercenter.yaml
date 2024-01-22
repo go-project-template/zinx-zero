@@ -2,6 +2,12 @@ Name: usercenter-rpc
 ListenOn: 0.0.0.0:20001
 Mode: dev
 
+DevServer:
+  Enabled: true
+  Port: 6470
+  MetricsPath: /metrics
+  HealthPath: /healthz
+
 #jwtAuth
 JwtAuth:
   AccessSecret: ae0536f9-6450-4606-8e13-5a19ed505da0

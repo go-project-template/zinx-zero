@@ -42,5 +42,9 @@ service usercenter {
 	@doc "wechat mini auth"
 	@handler wxMiniAuth
 	post /user/wxMiniAuth (WXMiniAuthReq) returns (WXMiniAuthResp)
+
+	@doc "create role"
+	@handler createRole
+	post /user/createRole (CreateRoleReq) returns (CreateRoleResp)
 }
 
