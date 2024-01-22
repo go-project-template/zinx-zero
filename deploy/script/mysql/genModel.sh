@@ -7,6 +7,7 @@
 
 #生成的表名
 tables=$2
+cache=$3
 #表生成的genmodel目录
 modeldir=./model
 
@@ -20,4 +21,4 @@ passwd=PXDN93VRKUm8TeE7
 
 rm -rf ${modeldir}
 echo "开始创建库：$dbname 的表：$2"
-goctl model mysql datasource -url="${username}:${passwd}@tcp(${host}:${port})/${dbname}" -table="${tables}"  -dir="${modeldir}" -home=../../goctl/1.6.1/ -cache=true --style=goZero
+goctl model mysql datasource -url="${username}:${passwd}@tcp(${host}:${port})/${dbname}" -table="${tables}"  -dir="${modeldir}" -home=../../goctl/1.6.1/ -cache=${cache} --style=goZero

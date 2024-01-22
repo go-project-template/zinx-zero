@@ -60,6 +60,13 @@ message GenerateTokenResp {
   int64 refreshAfter = 3;
 }
 
+message CreateRoleReq {
+  int64 accountId = 1;
+  string nickname = 2;
+  int32 sex = 3;
+}
+message CreateRoleResp { int64 roleId = 1; }
+
 // service
 service usercenter {
   rpc login(LoginReq) returns (LoginResp);
@@ -70,4 +77,5 @@ service usercenter {
   rpc getUserAuthByAccountId(GetUserAuthByAccountIdReq)
       returns (GetUserAuthyAccountIdResp);
   rpc generateToken(GenerateTokenReq) returns (GenerateTokenResp);
+  rpc createRole(CreateRoleReq) returns (CreateRoleResp);
 }

@@ -19,6 +19,8 @@ type ServiceContext struct {
 
 	UserAccountModel     model.UserAccountModel
 	UserAccountAuthModel model.UserAccountAuthModel
+	UserRoleModel        model.UserRoleModel
+	UserRoleidPoolModel  model.UserRoleidPoolModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -34,5 +36,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 		UserAccountModel:     model.NewUserAccountModel(sqlConn, c.Cache),
 		UserAccountAuthModel: model.NewUserAccountAuthModel(sqlConn, c.Cache),
+		UserRoleModel:        model.NewUserRoleModel(sqlConn, c.Cache),
+		UserRoleidPoolModel:  model.NewUserRoleidPoolModel(sqlConn),
 	}
 }

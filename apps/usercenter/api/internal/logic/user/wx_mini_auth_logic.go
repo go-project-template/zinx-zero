@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"fmt"
 
 	"zinx-zero/apps/acommon/aerr"
 	"zinx-zero/apps/acommon/globalkey"
@@ -67,12 +66,10 @@ func (l *WxMiniAuthLogic) WxMiniAuth(req *types.WXMiniAuthReq) (resp *types.WXMi
 
 		//Wechat-Mini Decrypted data
 		mobile := userData.PhoneNumber
-		nickName := fmt.Sprintf("LookLook%s", mobile[7:])
 		registerRsp, err := l.svcCtx.UsercenterRpc.Register(l.ctx, &usercenter.RegisterReq{
 			AuthKey:  authResult.OpenID,
 			AuthType: globalkey.Model_UserAuthTypeSmallWX,
 			Mobile:   mobile,
-			Nickname: nickName,
 		})
 		if err != nil {
 			return nil, errors.Wrapf(ErrWxMiniAuthFailError, "UsercenterRpc.Register err :%v, authResult : %+v", err, authResult)

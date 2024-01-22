@@ -56,3 +56,13 @@ type (
 		UserInfo User `json:"userInfo"`
 	}
 )
+
+type (
+	CreateRoleReq {
+		Nickname string `json:"nickname"`
+		Sex      int32  `json:"sex"`
+	}
+	CreateRoleResp {
+		RoleId int64 `json:"role_id"`
+	}
+)

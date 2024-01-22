@@ -18,6 +18,7 @@ services:
       - 2345:2345
       - 2346:2346
       - 2347:2347
+      - 6470:6470
     volumes:
       - .:/go/src
     privileged: true

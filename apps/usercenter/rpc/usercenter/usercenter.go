@@ -13,6 +13,8 @@ import (
 )
 
 type (
+	CreateRoleReq             = pb.CreateRoleReq
+	CreateRoleResp            = pb.CreateRoleResp
 	GenerateTokenReq          = pb.GenerateTokenReq
 	GenerateTokenResp         = pb.GenerateTokenResp
 	GetUserAuthByAccountIdReq = pb.GetUserAuthByAccountIdReq
@@ -35,6 +37,7 @@ type (
 		GetUserAuthByAuthKey(ctx context.Context, in *GetUserAuthByAuthKeyReq, opts ...grpc.CallOption) (*GetUserAuthByAuthKeyResp, error)
 		GetUserAuthByAccountId(ctx context.Context, in *GetUserAuthByAccountIdReq, opts ...grpc.CallOption) (*GetUserAuthyAccountIdResp, error)
 		GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...grpc.CallOption) (*GenerateTokenResp, error)
+		CreateRole(ctx context.Context, in *CreateRoleReq, opts ...grpc.CallOption) (*CreateRoleResp, error)
 	}
 
 	defaultUsercenter struct {
@@ -76,4 +79,9 @@ func (m *defaultUsercenter) GetUserAuthByAccountId(ctx context.Context, in *GetU
 func (m *defaultUsercenter) GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...grpc.CallOption) (*GenerateTokenResp, error) {
 	client := pb.NewUsercenterClient(m.cli.Conn())
 	return client.GenerateToken(ctx, in, opts...)
+}
+
+func (m *defaultUsercenter) CreateRole(ctx context.Context, in *CreateRoleReq, opts ...grpc.CallOption) (*CreateRoleResp, error) {
+	client := pb.NewUsercenterClient(m.cli.Conn())
+	return client.CreateRole(ctx, in, opts...)
 }

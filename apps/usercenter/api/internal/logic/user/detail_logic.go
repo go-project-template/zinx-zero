@@ -27,7 +27,6 @@ func NewDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DetailLogi
 }
 
 func (l *DetailLogic) Detail(req *types.UserInfoReq) (resp *types.UserInfoResp, err error) {
-
 	accountId, err := ctxdata.GetAccountIdFromCtx(l.ctx)
 	if err != nil {
 		return nil, err

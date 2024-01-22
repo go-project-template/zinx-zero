@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"zinx-zero/apps/acommon/aerr"
-	"zinx-zero/apps/acommon/astring"
 	"zinx-zero/apps/acommon/autils"
 	"zinx-zero/apps/model"
 	"zinx-zero/apps/usercenter/rpc/internal/svc"
@@ -42,9 +41,6 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 	}
 
 	var accountId int64
-	if len(in.Nickname) == 0 {
-		in.Nickname = astring.RandLetterN(1) + astring.RandDigitN(7)
-	}
 	if len(in.Password) > 0 {
 		in.Password = autils.Md5HexByString(in.Password)
 	}

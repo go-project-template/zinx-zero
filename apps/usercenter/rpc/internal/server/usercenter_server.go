@@ -51,3 +51,8 @@ func (s *UsercenterServer) GenerateToken(ctx context.Context, in *pb.GenerateTok
 	l := logic.NewGenerateTokenLogic(ctx, s.svcCtx)
 	return l.GenerateToken(in)
 }
+
+func (s *UsercenterServer) CreateRole(ctx context.Context, in *pb.CreateRoleReq) (*pb.CreateRoleResp, error) {
+	l := logic.NewCreateRoleLogic(ctx, s.svcCtx)
+	return l.CreateRole(in)
+}
