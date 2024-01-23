@@ -44,16 +44,16 @@ func (l *CreateRoleLogic) CreateRole(in *pb.CreateRoleReq) (*pb.CreateRoleResp, 
 	}
 	roleIdStr, err := l.svcCtx.RedisClient.SpopCtx(l.ctx, globalkey.Cache_GenRoleId_UserIdPool)
 	if err != nil {
-		return nil, errors.Wrapf(aerr.NewErrCode(aerr.REDIS_ERROR), "Register user gen roleId err:%v", err)
+		return nil, errors.Wrapf(aerr.NewErrCode(aerr.REDIS_ERROR), "CreateRole user gen roleId err:%v", err)
 	}
 	var roleId = cast.ToInt64(roleIdStr)
 	if err := l.svcCtx.UserRoleModel.Trans(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		userRoleIdPool, err := l.svcCtx.UserRoleidPoolModel.TxFindOneUnuse(ctx, session, roleId)
 		if err != nil && err != model.ErrNotFound {
-			return errors.Wrapf(aerr.NewErrCode(aerr.DB_ERROR), "GetUserInfo find user_account db err , id:%d , err:%v", in.AccountId, err)
+			return errors.Wrapf(aerr.NewErrCode(aerr.DB_ERROR), "CreateRole find userRoleidPoolModel db err , id:%d , err:%v", roleId, err)
 		}
 		if userRoleIdPool == nil {
-			return errors.Wrapf(ErrUserNoExistsError, "id:%d", in.AccountId)
+			return errors.Wrapf(ErrUserNoExistsError, "id:%d", roleId)
 		}
 		userRole := new(model.UserRole)
 		userRole.RoleId = userRoleIdPool.RoleId
@@ -62,7 +62,12 @@ func (l *CreateRoleLogic) CreateRole(in *pb.CreateRoleReq) (*pb.CreateRoleResp, 
 		userRole.AccountId = in.AccountId
 		_, err = l.svcCtx.UserRoleModel.Insert(ctx, session, userRole)
 		if err != nil {
-			return errors.Wrapf(aerr.NewErrCode(aerr.DB_ERROR), "Register db user_role Insert err:%v,user:%+v", err, userRole)
+			return errors.Wrapf(aerr.NewErrCode(aerr.DB_ERROR), "CreateRole db user_role Insert err:%v,user:%+v", err, userRole)
+		}
+		userRoleIdPool.IsUse = 1
+		_, err = l.svcCtx.UserRoleidPoolModel.Update(ctx, session, userRoleIdPool)
+		if err != nil {
+			return errors.Wrapf(aerr.NewErrCode(aerr.DB_ERROR), "GetUserInfo update UserRoleidPoolModel db err , id:%d , err:%v", roleId, err)
 		}
 		return nil
 	}); err != nil {
