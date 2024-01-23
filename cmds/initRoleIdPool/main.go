@@ -20,7 +20,7 @@ var per = 0
 func main() {
 	// 获取可以被整除的
 	var total = end - start + 1
-	for i := 10000; i < 100000; i++ {
+	for i := 1000; i < 100000; i++ {
 		if total%i == 0 {
 			per = i
 			fmt.Println(i)
@@ -30,15 +30,15 @@ func main() {
 	if per == 0 {
 		log.Fatal("per = 0")
 	}
-	init_mysql()
-	// init_redis()
+	// init_mysql()
+	init_redis()
 }
 func init_redis() {
 	// 创建 Redis 客户端
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379", // Redis 服务器地址
-		Password: "",               // 密码（如果有的话）
-		DB:       0,                // 使用的数据库索引（默认是0）
+		Addr:     "localhost:36379",  // Redis 服务器地址
+		Password: "G62m50oigInC30sf", // 密码（如果有的话）
+		DB:       0,                  // 使用的数据库索引（默认是0）
 	})
 
 	// 连接数据库
@@ -48,15 +48,17 @@ func init_redis() {
 	}
 	defer db.Close()
 
-	// 执行查询操作
-	rows, err := db.Query("SELECT role_id FROM user_roleid_pool where is_use = 0")
+	// 执行查询操作 一次给 redis 插入100万条数据大约30M大小
+	rows, err := db.Query("SELECT role_id FROM user_roleid_pool where is_use = 0 Limit 1000000")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
 
+	var total int64
 	// 遍历查询结果
 	for rows.Next() {
+		total++
 		var role_id int64
 		err := rows.Scan(&role_id) // 根据你的表结构调整列的顺序
 		if err != nil {
@@ -66,6 +68,10 @@ func init_redis() {
 		if err != nil {
 			log.Fatal(err)
 		}
+	}
+	// 不够100万,池子数据不足
+	if total < 1000000 {
+		log.Fatal("不够100万,池子数据不足,已插入: ", total)
 	}
 	fmt.Println("数据插入完成！")
 }

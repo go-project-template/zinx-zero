@@ -2,6 +2,7 @@ package playerManager
 
 import (
 	"errors"
+	"github.com/aceld/zinx/ziface"
 	"zinx-zero/apps/gamex/internal/ice"
 
 	"github.com/aceld/zinx/zutils"
@@ -29,26 +30,27 @@ type PlayerManager struct {
 }
 
 // NewPlayer implements ice.IPlayerManager.
-func (*PlayerManager) NewPlayer(accountId int64) (player ice.IPlayer) {
+func (*PlayerManager) NewPlayer(roleId int64, conn ziface.IConnection) (player ice.IPlayer) {
 	player = &Player{}
-	player.SetAccountId(accountId)
+	player.SetRoleId(roleId)
+	player.SetConn(conn)
 	return player
 }
 
 // AddPlayer implements ice.IPlayerManager.
 func (a *PlayerManager) AddPlayer(player ice.IPlayer) {
-	a.playerMap.Set(player.GetAccountIdStr(), player)
-	logx.Infof("player add to playerManager successfully: %v", player.GetAccountId())
+	a.playerMap.Set(player.GetRoleIdStr(), player)
+	logx.Infof("player add to playerManager successfully: %v", player.GetRoleId())
 }
 
-// GetPlayerByAccountId implements ice.IPlayerManager.
-func (a *PlayerManager) GetPlayerByAccountId(accountId int64) (player ice.IPlayer, err error) {
-	return a.GetPlayerByAccountIdStr(cast.ToString(accountId))
+// GetPlayerByRoleId implements ice.IPlayerManager.
+func (a *PlayerManager) GetPlayerByRoleId(roleId int64) (player ice.IPlayer, err error) {
+	return a.GetPlayerByRoleIdStr(cast.ToString(roleId))
 }
 
-// GetPlayerByAccountIdStr implements ice.IPlayerManager.
-func (a *PlayerManager) GetPlayerByAccountIdStr(userIdStr string) (player ice.IPlayer, err error) {
-	if conn, ok := a.playerMap.Get(userIdStr); ok {
+// GetPlayerByRoleIdStr implements ice.IPlayerManager.
+func (a *PlayerManager) GetPlayerByRoleIdStr(roleIdStr string) (player ice.IPlayer, err error) {
+	if conn, ok := a.playerMap.Get(roleIdStr); ok {
 		return conn.(ice.IPlayer), nil
 	}
 	return nil, errors.New("player not found")
@@ -56,6 +58,6 @@ func (a *PlayerManager) GetPlayerByAccountIdStr(userIdStr string) (player ice.IP
 
 // RemovePlayer implements ice.IPlayerManager.
 func (a *PlayerManager) RemovePlayer(player ice.IPlayer) {
-	a.playerMap.Remove(player.GetAccountIdStr())
-	logx.Infof("player Remove accountId=%d successfully", player.GetAccountId())
+	a.playerMap.Remove(player.GetRoleIdStr())
+	logx.Infof("player Remove roleId=%d successfully", player.GetRoleId())
 }
