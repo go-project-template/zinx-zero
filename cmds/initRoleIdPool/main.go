@@ -20,7 +20,7 @@ var per = 0
 func main() {
 	// 获取可以被整除的
 	var total = end - start + 1
-	for i := 10000; i < 100000; i++ {
+	for i := 1000; i < 100000; i++ {
 		if total%i == 0 {
 			per = i
 			fmt.Println(i)
