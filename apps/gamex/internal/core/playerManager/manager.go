@@ -2,8 +2,9 @@ package playerManager
 
 import (
 	"errors"
-	"github.com/aceld/zinx/ziface"
 	"zinx-zero/apps/gamex/internal/ice"
+
+	"github.com/aceld/zinx/ziface"
 
 	"github.com/aceld/zinx/zutils"
 	"github.com/spf13/cast"
@@ -34,6 +35,7 @@ func (*PlayerManager) NewPlayer(roleId int64, conn ziface.IConnection) (player i
 	player = &Player{}
 	player.SetRoleId(roleId)
 	player.SetConn(conn)
+	player.InitPosition()
 	return player
 }
 

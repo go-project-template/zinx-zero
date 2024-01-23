@@ -77,8 +77,9 @@ func (a *GameServer) GetServiceContext() *svc.ServiceContext {
 }
 
 func OnConnectionAdd(conn ziface.IConnection) {
-	GetGameServer().GetServiceContext().Config
-	playerManager.GetPlayerManager().NewPlayer()
+	roleId, _ := GetGameServer().GetServiceContext().IDWorker.NextID()
+	player := playerManager.GetPlayerManager().NewPlayer(roleId, conn)
+	playerManager.GetPlayerManager().AddPlayer(player)
 }
 func OnConnectionLost(conn ziface.IConnection) {
 }

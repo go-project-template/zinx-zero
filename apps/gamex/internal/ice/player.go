@@ -18,6 +18,8 @@ type IPlayer interface {
 	GetConn() (conn ziface.IConnection)
 	SendMsg(msgID uint32, data proto.Message)
 	SendBuffMsg(msgID uint32, data proto.Message)
+
+	InitPosition()
 }
 
 type IPlayerManager interface {

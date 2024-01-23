@@ -1,10 +1,12 @@
 package playerManager
 
 import (
+	"math/rand"
+	"zinx-zero/apps/gamex/internal/ice"
+
 	"github.com/aceld/zinx/ziface"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/proto"
-	"zinx-zero/apps/gamex/internal/ice"
 
 	"github.com/spf13/cast"
 )
@@ -19,6 +21,18 @@ type Player struct {
 	accountIdStr string
 	nickname     string
 	conn         ziface.IConnection
+	X            float32 // Planar x coordinate(平面x坐标)
+	Y            float32 // Height(高度)
+	Z            float32 // Planar y coordinate (Note: not Y)- 平面y坐标 (注意不是Y)
+	V            float32 //  Rotation 0-360 degrees(旋转0-360度)
+}
+
+// InitPosition implements ice.IPlayer.
+func (a *Player) InitPosition() {
+	a.X = float32(160 + rand.Intn(50)) // Randomly offset on the X-axis based on the point 160(随机在160坐标点 基于X轴偏移若干坐标)
+	a.Y = 0                            // Height is 0
+	a.Z = float32(134 + rand.Intn(50)) // Randomly offset on the Y-axis based on the point 134(随机在134坐标点 基于Y轴偏移若干坐标)
+	a.V = 0                            // Angle is 0, not yet implemented(角度为0，尚未实现)
 }
 
 // SendMsg Send messages to the client, mainly serializing and sending the protobuf data of the pb Message
