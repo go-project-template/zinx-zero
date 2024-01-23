@@ -2,6 +2,7 @@ package playerManager
 
 import (
 	"math/rand"
+	"sync"
 	"zinx-zero/apps/gamex/internal/ice"
 
 	"github.com/aceld/zinx/ziface"
@@ -15,6 +16,8 @@ import (
 var _ ice.IPlayer = (*Player)(nil)
 
 type Player struct {
+	sync.RWMutex
+
 	roleId       int64
 	roleIdStr    string
 	accountId    int64
@@ -84,48 +87,86 @@ func (a *Player) SendBuffMsg(msgID uint32, data proto.Message) {
 }
 
 func (a *Player) SetConn(conn ziface.IConnection) {
-	a.conn = conn
+	a.doWrite(func() {
+		a.conn = conn
+	})
 }
 
 func (a *Player) GetConn() (conn ziface.IConnection) {
-	return a.conn
+	a.doRead(func() {
+		conn = a.conn
+	})
+	return conn
 }
 
 func (a *Player) SetRoleId(roleId int64) {
-	a.roleId = roleId
-	a.roleIdStr = cast.ToString(roleId)
+	a.doWrite(func() {
+		a.roleId = roleId
+		a.roleIdStr = cast.ToString(roleId)
+	})
 }
 
 func (a *Player) GetRoleId() (roleId int64) {
-	return a.roleId
+	a.doRead(func() {
+		roleId = a.roleId
+	})
+	return roleId
 }
 
 func (a *Player) GetRoleIdStr() (roleIdStr string) {
-	return a.roleIdStr
+	a.doRead(func() {
+		roleIdStr = a.roleIdStr
+	})
+	return roleIdStr
 }
 
 // GetNickname implements ice.IPlayer.
-func (a *Player) GetNickname() string {
-	return a.nickname
+func (a *Player) GetNickname() (nickname string) {
+	a.doRead(func() {
+		nickname = a.nickname
+	})
+	return nickname
 }
 
 // GetAccountId implements ice.IPlayer.
-func (a *Player) GetAccountId() int64 {
-	return a.accountId
+func (a *Player) GetAccountId() (accountId int64) {
+	a.doRead(func() {
+		accountId = a.accountId
+	})
+	return accountId
 }
 
 // GetAccountIdStr implements ice.IPlayer.
 func (a *Player) GetAccountIdStr() (accountIdStr string) {
-	return a.accountIdStr
+	a.doRead(func() {
+		accountIdStr = a.accountIdStr
+	})
+	return accountIdStr
 }
 
 // SetAccountId implements ice.IPlayer.
 func (a *Player) SetAccountId(accountId int64) {
-	a.accountId = accountId
-	a.accountIdStr = cast.ToString(accountId)
+	a.doWrite(func() {
+		a.accountId = accountId
+		a.accountIdStr = cast.ToString(accountId)
+	})
 }
 
 // SetNickname implements ice.IPlayer.
 func (a *Player) SetNickname(nickname string) {
-	a.nickname = nickname
+	a.doWrite(func() {
+		a.nickname = nickname
+	})
+}
+
+func (a *Player) doWrite(fn func()) {
+	a.Lock()
+	defer a.Unlock()
+	fn()
+}
+
+func (a *Player) doRead(fn func()) {
+	a.RLock()
+	defer a.RUnlock()
+	fn()
 }
