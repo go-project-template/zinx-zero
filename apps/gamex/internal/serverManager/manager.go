@@ -1,6 +1,7 @@
 package serverManager
 
 import (
+	"zinx-zero/apps/acommon/globalkey"
 	"zinx-zero/apps/gamex/internal/core/playerManager"
 	"zinx-zero/apps/gamex/internal/ice"
 	"zinx-zero/apps/gamex/internal/router"
@@ -81,6 +82,14 @@ func OnConnectionAdd(conn ziface.IConnection) {
 	player := playerManager.GetPlayerManager().NewPlayer(roleId, conn)
 	playerManager.GetPlayerManager().AddPlayer(player)
 	player.SyncPID()
+	player.BroadCastStartPosition()
+	// Bind the property "pID" to the connection
+	// 将该连接绑定属性PID
+	conn.SetProperty(globalkey.ConnProperty_RoleId, player.GetRoleId())
+	// Synchronize online player information and display surrounding player information
+	// 同步周边玩家上线信息，与现实周边玩家信息
+	player.SyncSurrounding()
+
 }
 func OnConnectionLost(conn ziface.IConnection) {
 }
