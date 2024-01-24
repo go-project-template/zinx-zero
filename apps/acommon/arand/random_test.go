@@ -1,15 +1,13 @@
-package astring
+package arand
 
 import (
 	"regexp"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRand(t *testing.T) {
-	Seed(time.Now().UnixNano())
 	assert.True(t, len(Rand()) > 0)
 	assert.True(t, len(RandLetterN(1)) > 0)
 	assert.True(t, len(RandLetterDigitN(1)) > 0)
