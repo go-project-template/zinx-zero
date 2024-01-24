@@ -80,6 +80,7 @@ func OnConnectionAdd(conn ziface.IConnection) {
 	roleId, _ := GetGameServer().GetServiceContext().IDWorker.NextID()
 	player := playerManager.GetPlayerManager().NewPlayer(roleId, conn)
 	playerManager.GetPlayerManager().AddPlayer(player)
+	player.SyncPID()
 }
 func OnConnectionLost(conn ziface.IConnection) {
 }

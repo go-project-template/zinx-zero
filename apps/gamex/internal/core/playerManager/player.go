@@ -4,6 +4,7 @@ import (
 	"sync"
 	"zinx-zero/apps/acommon/arand"
 	"zinx-zero/apps/gamex/internal/ice"
+	"zinx-zero/apps/gamex/pb"
 
 	"github.com/aceld/zinx/ziface"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -30,12 +31,20 @@ type Player struct {
 	V            float32 //  Rotation 0-360 degrees(旋转0-360度)
 }
 
+// SyncPID implements ice.IPlayer.
+func (a *Player) SyncPID() {
+	msg := &pb.SyncPID{PID: int32(a.GetRoleId())}
+	a.SendBuffMsg(pb.Msg_SyncPID_ID, msg)
+}
+
 // InitPosition implements ice.IPlayer.
 func (a *Player) InitPosition() {
-	a.X = float32(160 + arand.Grand.Intn(50)) // Randomly offset on the X-axis based on the point 160(随机在160坐标点 基于X轴偏移若干坐标)
-	a.Y = 0                                   // Height is 0
-	a.Z = float32(134 + arand.Grand.Intn(50)) // Randomly offset on the Y-axis based on the point 134(随机在134坐标点 基于Y轴偏移若干坐标)
-	a.V = 0                                   // Angle is 0, not yet implemented(角度为0，尚未实现)
+	a.doWrite(func() {
+		a.X = float32(160 + arand.Intn(50)) // Randomly offset on the X-axis based on the point 160(随机在160坐标点 基于X轴偏移若干坐标)
+		a.Y = 0                             // Height is 0
+		a.Z = float32(134 + arand.Intn(50)) // Randomly offset on the Y-axis based on the point 134(随机在134坐标点 基于Y轴偏移若干坐标)
+		a.V = 0                             // Angle is 0, not yet implemented(角度为0，尚未实现)
+	})
 }
 
 // SendMsg Send messages to the client, mainly serializing and sending the protobuf data of the pb Message
@@ -65,7 +74,7 @@ func (a *Player) SendMsg(msgID uint32, data proto.Message) {
 // SendBuffMsg Send messages to the client, mainly serializing and sending the protobuf data of the pb Message
 //
 //	(发送消息给客户端，主要是将pb的protobuf数据序列化之后发送)
-func (a *Player) SendBuffMsg(msgID uint32, data proto.Message) {
+func (a *Player) SendBuffMsg(msgID pb.Msg, data proto.Message) {
 	if a.conn == nil {
 		logx.Errorf("SendBuffMsg roleId=%v connection in player is nil", a.GetRoleId())
 		return
@@ -80,7 +89,7 @@ func (a *Player) SendBuffMsg(msgID uint32, data proto.Message) {
 
 	// Call the Zinx framework's SendMsg to send the packet
 	// 调用Zinx框架的SendMsg发包
-	if err := a.conn.SendBuffMsg(msgID, msg); err != nil {
+	if err := a.conn.SendBuffMsg(uint32(msgID), msg); err != nil {
 		logx.Errorf("SendBuffMsg roleId=%v err: %v", a.GetRoleId(), err)
 		return
 	}

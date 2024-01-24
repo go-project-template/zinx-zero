@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-option go_package = ".";
+option go_package = "./pb";
 
 package pb;
 
-enum MSG {
+enum Msg {
   Placeholder = 0;
   SyncPID_ID = 1;
   BroadCast_ID = 200;

@@ -20,6 +20,7 @@ type IPlayer interface {
 	SendBuffMsg(msgID uint32, data proto.Message)
 
 	InitPosition()
+	SyncPID()
 }
 
 type IPlayerManager interface {
