@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"zinx-zero/apps/acommon/aerr"
-	"zinx-zero/apps/acommon/astring"
+	"zinx-zero/apps/acommon/arand"
 	"zinx-zero/apps/acommon/globalkey"
 	"zinx-zero/apps/model"
 	"zinx-zero/apps/usercenter/rpc/internal/svc"
@@ -40,7 +40,7 @@ func (l *CreateRoleLogic) CreateRole(in *pb.CreateRoleReq) (*pb.CreateRoleResp, 
 		return nil, errors.Wrapf(ErrUserNoExistsError, "id:%d", in.AccountId)
 	}
 	if len(in.Nickname) == 0 {
-		in.Nickname = astring.RandLetterN(1) + astring.RandDigitN(7)
+		in.Nickname = arand.RandLetterN(1) + arand.RandDigitN(7)
 	}
 	roleIdStr, err := l.svcCtx.RedisClient.SpopCtx(l.ctx, globalkey.Cache_GenRoleId_UserIdPool)
 	if err != nil {
