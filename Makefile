@@ -55,6 +55,11 @@ model:
 # 生成 cache 业务代码
 cache:
 	cd cmds/autoGenCache && go run main.go
+# 解析 excel 生成 json 配置
+config:
+	cd cmds/exceltool && rm -r output && go run main.go && \
+	cp -r output/go/conf $(PROJECT_DIR)/apps/gamex/ && \
+	cp -r output/go/aconf $(PROJECT_DIR)/apps/acommon/
 
 api2:
 	cd apps/usercenter/api/desc && goctl api go -api *.api -dir=../ \
