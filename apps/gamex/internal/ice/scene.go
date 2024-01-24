@@ -7,7 +7,6 @@ type IScene interface {
 }
 
 type ISceneManager interface {
-	NewScene(id int64) (scene IScene)
 	AddScene(scene IScene)
 	GetSceneBySceneId(sceneId int64) (scene IScene, err error)
 	GetSceneBySceneIdStr(sceneIdStr string) (scene IScene, err error)

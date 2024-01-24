@@ -3,6 +3,7 @@ package playerManager
 import (
 	"sync"
 	"zinx-zero/apps/gamex/internal/ice"
+	"zinx-zero/apps/gamex/msg"
 	"zinx-zero/apps/gamex/pb"
 
 	"github.com/aceld/zinx/ziface"
@@ -15,15 +16,31 @@ import (
 // Check interface implementation.
 var _ ice.IPlayer = (*Player)(nil)
 
+func NewPlayer(roleId int64, conn ziface.IConnection) (player ice.IPlayer) {
+	player = &Player{}
+	player.SetRoleId(roleId)
+	player.SetConn(conn)
+	return player
+}
+
 type Player struct {
+	*msg.DBPlayer
 	sync.RWMutex
 
-	roleId       int64
 	roleIdStr    string
-	accountId    int64
 	accountIdStr string
-	nickname     string
-	conn         ziface.IConnection
+
+	bag  ice.IPlayerBag
+	conn ziface.IConnection
+}
+
+// Init implements ice.IPlayer.
+func (a *Player) Init(dbPlayer *msg.DBPlayer) {
+	if dbPlayer == nil {
+		logx.Errorf("Init Player dbPlayer is nil")
+		return
+	}
+	a.DBPlayer = dbPlayer
 }
 
 // SendMsg Send messages to the client, mainly serializing and sending the protobuf data of the pb Message
@@ -89,14 +106,14 @@ func (a *Player) GetConn() (conn ziface.IConnection) {
 
 func (a *Player) SetRoleId(roleId int64) {
 	a.doWrite(func() {
-		a.roleId = roleId
+		a.RoleId = roleId
 		a.roleIdStr = cast.ToString(roleId)
 	})
 }
 
 func (a *Player) GetRoleId() (roleId int64) {
 	a.doRead(func() {
-		roleId = a.roleId
+		roleId = a.RoleId
 	})
 	return roleId
 }
@@ -111,7 +128,7 @@ func (a *Player) GetRoleIdStr() (roleIdStr string) {
 // GetNickname implements ice.IPlayer.
 func (a *Player) GetNickname() (nickname string) {
 	a.doRead(func() {
-		nickname = a.nickname
+		nickname = a.Nickname
 	})
 	return nickname
 }
@@ -119,7 +136,7 @@ func (a *Player) GetNickname() (nickname string) {
 // GetAccountId implements ice.IPlayer.
 func (a *Player) GetAccountId() (accountId int64) {
 	a.doRead(func() {
-		accountId = a.accountId
+		accountId = a.AccountId
 	})
 	return accountId
 }
@@ -135,7 +152,7 @@ func (a *Player) GetAccountIdStr() (accountIdStr string) {
 // SetAccountId implements ice.IPlayer.
 func (a *Player) SetAccountId(accountId int64) {
 	a.doWrite(func() {
-		a.accountId = accountId
+		a.AccountId = accountId
 		a.accountIdStr = cast.ToString(accountId)
 	})
 }
@@ -143,7 +160,7 @@ func (a *Player) SetAccountId(accountId int64) {
 // SetNickname implements ice.IPlayer.
 func (a *Player) SetNickname(nickname string) {
 	a.doWrite(func() {
-		a.nickname = nickname
+		a.Nickname = nickname
 	})
 }
 

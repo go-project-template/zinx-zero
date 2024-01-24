@@ -33,13 +33,6 @@ type TemplateManager struct {
 	templateMap zutils.ShardLockMaps
 }
 
-// NewTemplate implements ice.ITemplateManager.
-func (*TemplateManager) NewTemplate(id int64) (template ice.ITemplate) {
-	template = &Template{}
-	template.SetTemplateId(id)
-	return template
-}
-
 func (a *TemplateManager) AddTemplate(template ice.ITemplate) {
 	a.templateMap.Set(template.GetTemplateIdStr(), template)
 	logx.Infof("AddTemplate success. %d", template.GetTemplateId())

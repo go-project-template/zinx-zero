@@ -1,6 +1,7 @@
 package ice
 
 import (
+	"zinx-zero/apps/gamex/msg"
 	"zinx-zero/apps/gamex/pb"
 
 	"github.com/aceld/zinx/ziface"
@@ -8,6 +9,7 @@ import (
 )
 
 type IPlayer interface {
+	Init(dbPlayer *msg.DBPlayer)
 	SetRoleId(roleId int64)
 	GetRoleId() (roleId int64)
 	GetRoleIdStr() (roleIdStr string)
@@ -23,7 +25,6 @@ type IPlayer interface {
 }
 
 type IPlayerManager interface {
-	NewPlayer(roleId int64, conn ziface.IConnection) (player IPlayer)
 	AddPlayer(player IPlayer)
 	GetPlayerByRoleId(roleId int64) (player IPlayer, err error)
 	GetPlayerByRoleIdStr(roleIdStr string) (player IPlayer, err error)

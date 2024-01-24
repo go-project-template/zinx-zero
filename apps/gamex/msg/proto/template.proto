@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+option go_package = "./msg";
+
+package msg;
+
+message DBTemplate { int64 TemplateId = 1; }

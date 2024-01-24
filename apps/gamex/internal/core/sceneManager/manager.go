@@ -28,13 +28,6 @@ type SceneManager struct {
 	sceneMap zutils.ShardLockMaps
 }
 
-// NewScene implements ice.ISceneManager.
-func (*SceneManager) NewScene(id int64) (scene ice.IScene) {
-	scene = &Scene{}
-	scene.SetSceneId(id)
-	return scene
-}
-
 func (a *SceneManager) AddScene(scene ice.IScene) {
 	a.sceneMap.Set(scene.GetSceneIdStr(), scene)
 	logx.Infof("scene add to sceneManager successfully: %v", scene.GetSceneId())

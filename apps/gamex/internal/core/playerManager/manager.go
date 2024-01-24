@@ -2,7 +2,6 @@ package playerManager
 
 import (
 	"errors"
-	"github.com/aceld/zinx/ziface"
 	"zinx-zero/apps/gamex/internal/ice"
 
 	"github.com/aceld/zinx/zutils"
@@ -27,14 +26,6 @@ func GetPlayerManager() ice.IPlayerManager {
 
 type PlayerManager struct {
 	playerMap zutils.ShardLockMaps
-}
-
-// NewPlayer implements ice.IPlayerManager.
-func (*PlayerManager) NewPlayer(roleId int64, conn ziface.IConnection) (player ice.IPlayer) {
-	player = &Player{}
-	player.SetRoleId(roleId)
-	player.SetConn(conn)
-	return player
 }
 
 // AddPlayer implements ice.IPlayerManager.

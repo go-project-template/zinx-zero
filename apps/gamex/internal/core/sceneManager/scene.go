@@ -10,6 +10,12 @@ import (
 // Check interface implementation.
 var _ ice.IScene = (*Scene)(nil)
 
+func NewScene(id int64) (scene ice.IScene) {
+	scene = &Scene{}
+	scene.SetSceneId(id)
+	return scene
+}
+
 type Scene struct {
 	sync.RWMutex
 

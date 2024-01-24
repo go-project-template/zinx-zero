@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option go_package = "./msg";
+
+package msg;
+
+import "proto/common.proto";
+
+message DBPlayer {
+  int64 RoleId = 1;
+  int64 AccountId = 3;
+  string Nickname = 5;
+  map<int32, int64> IntAttr = 6;
+  map<int32, string> StrAttr = 7;
+
+  DBPlayerBag DBPlayerBag = 8;
+}
+
+message ItemInfo {
+  int64 UniqueId = 1;
+  int64 ItemId = 2;
+  int64 ItemCount = 3;
+}
+
+message DBPlayerBag {
+  repeated ItemInfo ItemList = 1;
+  // map<int64,ItemInfo> ItemList
+}
