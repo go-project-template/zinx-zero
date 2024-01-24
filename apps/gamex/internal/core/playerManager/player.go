@@ -3,6 +3,7 @@ package playerManager
 import (
 	"sync"
 	"zinx-zero/apps/gamex/internal/ice"
+	"zinx-zero/apps/gamex/pb"
 
 	"github.com/aceld/zinx/ziface"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -28,7 +29,7 @@ type Player struct {
 // SendMsg Send messages to the client, mainly serializing and sending the protobuf data of the pb Message
 //
 //	(发送消息给客户端，主要是将pb的protobuf数据序列化之后发送)
-func (a *Player) SendMsg(msgID uint32, data proto.Message) {
+func (a *Player) SendMsg(msgID pb.MsgId, data proto.Message) {
 	if a.conn == nil {
 		logx.Errorf("SendMsg roleId=%v connection in player is nil", a.GetRoleId())
 		return
@@ -43,7 +44,7 @@ func (a *Player) SendMsg(msgID uint32, data proto.Message) {
 
 	// Call the Zinx framework's SendMsg to send the packet
 	// 调用Zinx框架的SendMsg发包
-	if err := a.conn.SendMsg(msgID, msg); err != nil {
+	if err := a.conn.SendMsg(uint32(msgID), msg); err != nil {
 		logx.Errorf("SendMsg roleId=%v err: %v", a.GetRoleId(), err)
 		return
 	}
@@ -52,7 +53,7 @@ func (a *Player) SendMsg(msgID uint32, data proto.Message) {
 // SendBuffMsg Send messages to the client, mainly serializing and sending the protobuf data of the pb Message
 //
 //	(发送消息给客户端，主要是将pb的protobuf数据序列化之后发送)
-func (a *Player) SendBuffMsg(msgID uint32, data proto.Message) {
+func (a *Player) SendBuffMsg(msgID pb.MsgId, data proto.Message) {
 	if a.conn == nil {
 		logx.Errorf("SendBuffMsg roleId=%v connection in player is nil", a.GetRoleId())
 		return
@@ -67,7 +68,7 @@ func (a *Player) SendBuffMsg(msgID uint32, data proto.Message) {
 
 	// Call the Zinx framework's SendMsg to send the packet
 	// 调用Zinx框架的SendMsg发包
-	if err := a.conn.SendBuffMsg(msgID, msg); err != nil {
+	if err := a.conn.SendBuffMsg(uint32(msgID), msg); err != nil {
 		logx.Errorf("SendBuffMsg roleId=%v err: %v", a.GetRoleId(), err)
 		return
 	}

@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-option go_package = ".";
+option go_package = "./pb";
 
 package pb;
 
-enum MSG {
+enum MsgId {
   Placeholder = 0;
   C2SLogin_ID = 1;
   S2CLogin_ID = 2;
