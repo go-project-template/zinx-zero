@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var Grand = rand.New(rand.NewSource(time.Now().UnixNano()))
+var _rand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 const (
 	letterBytes        = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -16,6 +16,18 @@ const (
 	idLen              = 8
 	defaultRandLen     = 8
 )
+
+func Intn(n int) int {
+	return _rand.Intn(n)
+}
+
+func Int31n(n int32) int32 {
+	return _rand.Int31n(n)
+}
+
+func Int63n(n int64) int64 {
+	return _rand.Int63n(n)
+}
 
 // Rand returns a random string.
 func Rand() string {
@@ -47,7 +59,7 @@ func RandWithPoolN(n int, _pool string) string {
 	pool := []rune(_pool)
 	res := make([]rune, n)
 	for i := 0; i < n; i++ {
-		res[i] = pool[Grand.Intn(len(pool))]
+		res[i] = pool[_rand.Intn(len(pool))]
 	}
 	return string(res)
 }

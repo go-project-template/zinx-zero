@@ -1,8 +1,8 @@
 package playerManager
 
 import (
-	"math/rand"
 	"sync"
+	"zinx-zero/apps/acommon/arand"
 	"zinx-zero/apps/gamex/internal/ice"
 
 	"github.com/aceld/zinx/ziface"
@@ -32,10 +32,10 @@ type Player struct {
 
 // InitPosition implements ice.IPlayer.
 func (a *Player) InitPosition() {
-	a.X = float32(160 + rand.Intn(50)) // Randomly offset on the X-axis based on the point 160(随机在160坐标点 基于X轴偏移若干坐标)
-	a.Y = 0                            // Height is 0
-	a.Z = float32(134 + rand.Intn(50)) // Randomly offset on the Y-axis based on the point 134(随机在134坐标点 基于Y轴偏移若干坐标)
-	a.V = 0                            // Angle is 0, not yet implemented(角度为0，尚未实现)
+	a.X = float32(160 + arand.Grand.Intn(50)) // Randomly offset on the X-axis based on the point 160(随机在160坐标点 基于X轴偏移若干坐标)
+	a.Y = 0                                   // Height is 0
+	a.Z = float32(134 + arand.Grand.Intn(50)) // Randomly offset on the Y-axis based on the point 134(随机在134坐标点 基于Y轴偏移若干坐标)
+	a.V = 0                                   // Angle is 0, not yet implemented(角度为0，尚未实现)
 }
 
 // SendMsg Send messages to the client, mainly serializing and sending the protobuf data of the pb Message
