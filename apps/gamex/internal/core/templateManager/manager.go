@@ -9,6 +9,11 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
+// This is a template. For use:
+// 1. Replace Template and template (match case) for yourself module name.
+// 2. Same operation replace ice/template.go.
+// 3. Change directory and file name for yourself module name.
+
 // Check interface implementation.
 var _ ice.ITemplateManager = (*TemplateManager)(nil)
 
