@@ -2,7 +2,6 @@ package ice
 
 import (
 	"zinx-zero/apps/gamex/msg"
-	"zinx-zero/apps/gamex/pb"
 
 	"github.com/aceld/zinx/ziface"
 	"google.golang.org/protobuf/proto"
@@ -20,8 +19,8 @@ type IPlayer interface {
 	GetNickname() (nickname string)
 	SetConn(conn ziface.IConnection)
 	GetConn() (conn ziface.IConnection)
-	SendMsg(msgID pb.MsgId, data proto.Message)
-	SendBuffMsg(msgID pb.MsgId, data proto.Message)
+	SendMsg(msgID msg.MsgId, data proto.Message)
+	SendBuffMsg(msgID msg.MsgId, data proto.Message)
 }
 
 type IPlayerManager interface {

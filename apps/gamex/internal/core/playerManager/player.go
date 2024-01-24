@@ -4,7 +4,6 @@ import (
 	"sync"
 	"zinx-zero/apps/gamex/internal/ice"
 	"zinx-zero/apps/gamex/msg"
-	"zinx-zero/apps/gamex/pb"
 
 	"github.com/aceld/zinx/ziface"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -46,7 +45,7 @@ func (a *Player) Init(dbPlayer *msg.DBPlayer) {
 // SendMsg Send messages to the client, mainly serializing and sending the protobuf data of the pb Message
 //
 //	(发送消息给客户端，主要是将pb的protobuf数据序列化之后发送)
-func (a *Player) SendMsg(msgID pb.MsgId, data proto.Message) {
+func (a *Player) SendMsg(msgID msg.MsgId, data proto.Message) {
 	if a.conn == nil {
 		logx.Errorf("SendMsg roleId=%v connection in player is nil", a.GetRoleId())
 		return
@@ -70,7 +69,7 @@ func (a *Player) SendMsg(msgID pb.MsgId, data proto.Message) {
 // SendBuffMsg Send messages to the client, mainly serializing and sending the protobuf data of the pb Message
 //
 //	(发送消息给客户端，主要是将pb的protobuf数据序列化之后发送)
-func (a *Player) SendBuffMsg(msgID pb.MsgId, data proto.Message) {
+func (a *Player) SendBuffMsg(msgID msg.MsgId, data proto.Message) {
 	if a.conn == nil {
 		logx.Errorf("SendBuffMsg roleId=%v connection in player is nil", a.GetRoleId())
 		return
