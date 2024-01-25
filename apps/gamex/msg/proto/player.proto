@@ -18,7 +18,7 @@ message DBPlayer {
 
 message ItemInfo {
   int64 UniqueId = 1;
-  int64 ItemId = 2;
+  int32 ItemId = 2;
   int64 ItemCount = 3;
 }
 

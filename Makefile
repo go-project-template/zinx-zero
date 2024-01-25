@@ -33,7 +33,7 @@ down:
 	docker compose -p my_project down
 
 proto:
-	cd apps/gamex/pb && ./build.sh
+	cd apps/gamex/msg && ./build.sh
 
 # 生成 api 业务代码 ， 进入"服务/api/desc"目录下，执行下面命令
 api:
@@ -60,7 +60,7 @@ config:
 	cd cmds/exceltool && rm -r output && go run main.go && \
 	gofmt -w output && \
 	cp -r output/go/conf $(PROJECT_DIR)/apps/gamex/ && \
-	cp -r output/go/aconf $(PROJECT_DIR)/apps/acommon/
+	cp -r output/go/cfg $(PROJECT_DIR)/apps/acommon/ && rm -r output 
 
 api2:
 	cd apps/usercenter/api/desc && goctl api go -api *.api -dir=../ \

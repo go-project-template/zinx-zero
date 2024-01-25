@@ -15,8 +15,8 @@ import (
 var dirPath = "./excel/"
 
 // 输出自定义文件夹
-var dirGo = []string{"./output/go/", "./output/go/aconf/"}
-var dirJson = []string{"./output/json/", "./output/go/conf/game/"}
+var dirGo = []string{"./output/go/cfg/"}
+var dirJson = []string{"./output/json/", "./output/go/conf/excel/"}
 var dirTs = []string{"./output/ts/"}
 
 func main() {
@@ -25,6 +25,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+	var structNameList []string
 	for _, info := range dir {
 		if info.IsDir() {
 			continue
@@ -51,6 +52,7 @@ func main() {
 
 		//首字母大写
 		structName := strings.Title(autocode.StructName)
+		structNameList = append(structNameList, structName)
 		//生成go文件
 		for _, dir := range dirGo {
 			err = os.MkdirAll(dir, os.ModePerm)
@@ -69,7 +71,6 @@ func main() {
 			if err != nil {
 				panic("create file failed, err:" + err.Error())
 			}
-
 		}
 		//生成json文件
 		for _, dir := range dirJson {
@@ -108,7 +109,31 @@ func main() {
 			}
 			jsonFile.Close()
 		}
+	}
 
+	//生成 ainit.go 文件
+	// 初始版本自动化代码工具
+	// type Ainit struct {
+	// 	StructNameList []string `json:"structNameList"`
+	// }
+	// ainit := Ainit{StructNameList: structNameList}
+	for _, dir := range dirGo {
+		err = os.MkdirAll(dir, os.ModePerm)
+		if err != nil {
+			panic(err)
+		}
+		create, err := os.Create(dir + "ainit.go")
+		if err != nil {
+			panic("create file failed, err:" + err.Error())
+		}
+		files, err := template.ParseFiles("./config_ainit.go.tpl")
+		if err != nil {
+			panic("create template failed, err:" + err.Error())
+		}
+		err = files.Execute(create, structNameList)
+		if err != nil {
+			panic("create file failed, err:" + err.Error())
+		}
 	}
 	fmt.Println("解析配置完成")
 }

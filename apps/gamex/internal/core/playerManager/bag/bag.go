@@ -2,6 +2,7 @@ package playerBag
 
 import (
 	"sync"
+	"zinx-zero/apps/acommon/cfg"
 	"zinx-zero/apps/acommon/globalkey"
 	"zinx-zero/apps/gamex/internal/ice"
 	"zinx-zero/apps/gamex/msg"
@@ -33,12 +34,12 @@ func (a *PlayerBag) Init(dbPlayerBag *msg.DBPlayerBag) {
 }
 
 // AddItemByItemId implements ice.IPlayerBag.
-func (a *PlayerBag) AddItemByItemId(itemId int64, changeCount int64, changeType globalkey.PlayerBag_ItemChangeType) {
-
+func (a *PlayerBag) AddItemByItemId(itemId int32, changeCount int64, changeType globalkey.PlayerBag_ItemChangeType) {
+	cfg.GetItemByID(itemId)
 }
 
 // DelItemByItemId implements ice.IPlayerBag.
-func (a *PlayerBag) DelItemByItemId(itemId int64, changeCount int64, changeType globalkey.PlayerBag_ItemChangeType) {
+func (a *PlayerBag) DelItemByItemId(itemId int32, changeCount int64, changeType globalkey.PlayerBag_ItemChangeType) {
 	panic("unimplemented")
 }
 
@@ -69,7 +70,7 @@ func (a *PlayerBag) GetItemByUniqueId(uniqueId int64) (itemInfo *msg.ItemInfo) {
 }
 
 // GetItemListByItemId implements ice.IPlayerBag.
-func (a *PlayerBag) GetItemListByItemId(itemId int64) (itemInfoList []*msg.ItemInfo) {
+func (a *PlayerBag) GetItemListByItemId(itemId int32) (itemInfoList []*msg.ItemInfo) {
 	a.doRead(func() {
 		for _, v := range a.GetItemList() {
 			if itemId == v.GetItemId() {
