@@ -2,10 +2,11 @@
 package cfg
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/fsnotify/fsnotify"
-	"github.com/spf13/viper"
-    "math/rand"
+	"os"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
  {{- range .Structs}}
@@ -27,58 +28,45 @@ type {{.StructName}} struct {
     {{- end }} {{- end }}
 }
 
-var {{.StructName}}Map map[{{.IDType}}]{{.StructName}}
-var {{.StructName}}Ary []{{.StructName}}
+var {{.StructName}}Map map[{{.IDType}}]*{{.StructName}}
+var {{.StructName}}Ary []*{{.StructName}}
 
 func init{{.StructName}}() {
-	v := viper.New()
-	v.SetConfigFile("./conf/game/{{.StructName}}.json")
-	v.SetConfigType("json")
-	err := v.ReadInConfig()
+	fileName := "./conf/game/{{.StructName}}.json"
+	bytes, err := os.ReadFile(fileName)
 	if err != nil {
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
-	v.WatchConfig()
-
-	v.OnConfigChange(func(e fsnotify.Event) {
-		if err := v.Unmarshal(&{{.StructName}}Map); err != nil {
-			fmt.Println(err)
-		}
-	})
-	if err := v.Unmarshal(&{{.StructName}}Map); err != nil {
+	if err := json.Unmarshal(bytes, &{{.StructName}}Map); err != nil {
 		panic(err)
 	}
-	{{.StructName}}Ary = make([]{{.StructName}}, 0, len({{.StructName}}Map))
+	{{.StructName}}Ary = make([]*{{.StructName}}, 0, len({{.StructName}}Map))
 	for _, item := range {{.StructName}}Map {
         {{.StructName}}Ary = append({{.StructName}}Ary, item)
     }
 }
 
-func Get{{.StructName}}Map() map[{{.IDType}}]{{.StructName}} {
+func Get{{.StructName}}Map() map[{{.IDType}}]*{{.StructName}} {
 	return {{.StructName}}Map
 }
 
-func Get{{.StructName}}Ary() []{{.StructName}} {
+func Get{{.StructName}}Ary() []*{{.StructName}} {
 	return {{.StructName}}Ary
 }
 
-func Get{{.StructName}}ByID(id {{.IDType}}) ({{.StructName}}, bool) {
-	item,ok := {{.StructName}}Map[id]
-	return item,ok
+func Get{{.StructName}}ByID(id {{.IDType}}) (item *{{.StructName}}) {
+	item = {{.StructName}}Map[id]
+	if item == nil {
+		logx.Errorf("Get{{.StructName}}ByID fail: %d ", id)
+	}
+	return item
 }
 
-func Get{{.StructName}}ByIndex(idx int) (item {{.StructName}},ok bool) {
+func Get{{.StructName}}ByIndex(idx int) (item *{{.StructName}}) {
 	lens := len({{.StructName}}Ary)
 	if lens <=0 || idx >= lens {
-	    return
+		logx.Errorf("Get{{.StructName}}ByIndex fail: %d ", idx)
+	    return nil
 	}
-	return {{.StructName}}Ary[idx],true
-}
-
-func GetRand{{.StructName}}() (item {{.StructName}},ok bool) {
-	lens := len({{.StructName}}Ary)
-	if lens <=0 {
-	    return
-	}
-	return {{.StructName}}Ary[rand.Intn(lens)],true
+	return {{.StructName}}Ary[idx]
 }

@@ -34,8 +34,8 @@ type TemplateManager struct {
 }
 
 func (a *TemplateManager) AddTemplate(template ice.ITemplate) {
-	a.templateMap.Set(template.GetTemplateIdStr(), template)
-	logx.Infof("AddTemplate success. %d", template.GetTemplateId())
+	a.templateMap.Set(template.GetTemplateIdStrLock(), template)
+	logx.Infof("AddTemplate success. %d", template.GetTemplateIdLock())
 }
 
 func (a *TemplateManager) GetTemplateByTemplateId(templateId int64) (template ice.ITemplate, err error) {
@@ -50,6 +50,6 @@ func (a *TemplateManager) GetTemplateByTemplateIdStr(templateIdStr string) (temp
 }
 
 func (a *TemplateManager) RemoveTemplate(template ice.ITemplate) {
-	a.templateMap.Remove(template.GetTemplateIdStr())
-	logx.Infof("RemoveTemplate fail. templateId=%d", template.GetTemplateId())
+	a.templateMap.Remove(template.GetTemplateIdStrLock())
+	logx.Infof("RemoveTemplate fail. templateId=%d", template.GetTemplateIdLock())
 }

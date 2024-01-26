@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = "./msg";
+
+package msg;
+
+enum EnumCode {
+  Code_Placeholder = 0;
+  Code_Success = 1;
+  Code_Fail = 2;
+
+  // --背包道具
+  Code_Item_NotEnough = 1001;       //道具不足
+  Code_Item_NotExist = 1002;        //道具不存在
+  Code_Item_UnknowStackType = 1003; //道具未知的叠加类型
+}
+
+enum EnumItemChangeType { ItemChangeType_None = 0; }

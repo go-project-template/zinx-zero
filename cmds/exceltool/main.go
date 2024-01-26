@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 	"text/template"
@@ -20,7 +19,7 @@ var dirJson = []string{"./output/json/", "./output/go/conf/excel/"}
 var dirTs = []string{"./output/ts/"}
 
 func main() {
-	dir, err := ioutil.ReadDir(dirPath)
+	dir, err := os.ReadDir(dirPath)
 	if err != nil {
 		fmt.Println(err)
 		return

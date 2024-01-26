@@ -3,7 +3,7 @@ package templateManager
 import (
 	"sync"
 	"zinx-zero/apps/gamex/internal/ice"
-	"zinx-zero/apps/gamex/msg"
+	"zinx-zero/apps/gamex/proto/msg"
 
 	"github.com/spf13/cast"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -12,9 +12,9 @@ import (
 // Check interface implementation.
 var _ ice.ITemplate = (*Template)(nil)
 
-func NewTemplate(id int64) (template ice.ITemplate) {
-	template = &Template{}
-	template.SetTemplateId(id)
+func NewTemplate(id int64) ice.ITemplate {
+	template := &Template{}
+	template.SetTemplateIdLock(id)
 	return template
 }
 
@@ -25,46 +25,38 @@ type Template struct {
 	templateIdStr string
 }
 
-// Init implements ice.ITemplate.
-func (a *Template) Init(dbTemplate *msg.DBTemplate) {
+// InitTemplateLock implements ice.ITemplate.
+func (a *Template) InitTemplateByDbLock(dbTemplate *msg.DBTemplate) {
 	if dbTemplate == nil {
-		logx.Errorf("Init Template dbTemplate is nil")
+		logx.Errorf("InitTemplateByDbLock dbTemplate is nil")
 		return
 	}
 	a.DBTemplate = dbTemplate
 }
 
-// GetTemplateId implements ice.ITemplate.
-func (a *Template) GetTemplateId() (templateId int64) {
-	a.doRead(func() {
-		templateId = a.GetTemplateId()
-	})
-	return templateId
+// GetTemplateIdLock implements ice.ITemplate.
+func (a *Template) GetTemplateIdLock() (templateId int64) {
+	return a.GetTemplateIdLock()
 }
 
-// GetTemplateIdStr implements ice.ITemplate.
-func (a *Template) GetTemplateIdStr() (templateIdStr string) {
-	a.doRead(func() {
-		templateIdStr = a.templateIdStr
-	})
-	return templateIdStr
+// GetTemplateIdStrLock implements ice.ITemplate.
+func (a *Template) GetTemplateIdStrLock() (templateIdStr string) {
+	return a.templateIdStr
 }
 
-// SetTemplateId implements ice.ITemplate.
-func (a *Template) SetTemplateId(templateId int64) {
-	a.doWrite(func() {
-		a.TemplateId = templateId
-		a.templateIdStr = cast.ToString(templateId)
-	})
+// SetTemplateIdLock implements ice.ITemplate.
+func (a *Template) SetTemplateIdLock(templateId int64) {
+	a.TemplateId = templateId
+	a.templateIdStr = cast.ToString(templateId)
 }
 
-func (a *Template) doWrite(fn func()) {
+func (a *Template) DoWriteLock(fn func()) {
 	a.Lock()
 	defer a.Unlock()
 	fn()
 }
 
-func (a *Template) doRead(fn func()) {
+func (a *Template) DoReadLock(fn func()) {
 	a.RLock()
 	defer a.RUnlock()
 	fn()

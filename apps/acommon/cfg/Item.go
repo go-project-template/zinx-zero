@@ -2,78 +2,66 @@
 package cfg
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/fsnotify/fsnotify"
-	"github.com/spf13/viper"
-	"math/rand"
+	"os"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type Item struct {
-	Id        int32  `json:"id"`        // Item
-	Name      string `json:"name"`      // 名字
-	Desc      string `json:"desc"`      // 描述
-	Level     int32  `json:"level"`     // 等级
-	Quality   int32  `json:"quality"`   // 品质
-	Types     int32  `json:"types"`     // 类型
+	Id        int32  `json:"Id"`        // Item
+	Name      string `json:"Name"`      // 名字
+	Desc      string `json:"Desc"`      // 描述
+	Types     int32  `json:"Types"`     // 类型
 	BindType  int32  `json:"BindType"`  // 绑定类型
 	StackType int32  `json:"StackType"` // 叠加类型
 	StackSize int64  `json:"StackSize"` // 最大叠加数量
-	EquipSlot int32  `json:"equipSlot"` // 装备位置
-	Icon      string `json:"icon"`      // 图标
+	Level     int32  `json:"Level"`     // 等级
+	Quality   int32  `json:"Quality"`   // 品质
+	EquipSlot int32  `json:"EquipSlot"` // 装备位置
+	Icon      string `json:"Icon"`      // 图标
 }
 
-var ItemMap map[int32]Item
-var ItemAry []Item
+var ItemMap map[int32]*Item
+var ItemAry []*Item
 
 func initItem() {
-	v := viper.New()
-	v.SetConfigFile("./conf/game/Item.json")
-	v.SetConfigType("json")
-	err := v.ReadInConfig()
+	fileName := "./conf/game/Item.json"
+	bytes, err := os.ReadFile(fileName)
 	if err != nil {
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
-	v.WatchConfig()
-
-	v.OnConfigChange(func(e fsnotify.Event) {
-		if err := v.Unmarshal(&ItemMap); err != nil {
-			fmt.Println(err)
-		}
-	})
-	if err := v.Unmarshal(&ItemMap); err != nil {
+	if err := json.Unmarshal(bytes, &ItemMap); err != nil {
 		panic(err)
 	}
-	ItemAry = make([]Item, 0, len(ItemMap))
+	ItemAry = make([]*Item, 0, len(ItemMap))
 	for _, item := range ItemMap {
 		ItemAry = append(ItemAry, item)
 	}
 }
 
-func GetItemMap() map[int32]Item {
+func GetItemMap() map[int32]*Item {
 	return ItemMap
 }
 
-func GetItemAry() []Item {
+func GetItemAry() []*Item {
 	return ItemAry
 }
 
-func GetItemByID(id int32) (Item, bool) {
-	item, ok := ItemMap[id]
-	return item, ok
+func GetItemByID(id int32) (item *Item) {
+	item = ItemMap[id]
+	if item == nil {
+		logx.Errorf("GetItemByID fail: %d ", id)
+	}
+	return item
 }
 
-func GetItemByIndex(idx int) (item Item, ok bool) {
+func GetItemByIndex(idx int) (item *Item) {
 	lens := len(ItemAry)
 	if lens <= 0 || idx >= lens {
-		return
+		logx.Errorf("GetItemByIndex fail: %d ", idx)
+		return nil
 	}
-	return ItemAry[idx], true
-}
-
-func GetRandItem() (item Item, ok bool) {
-	lens := len(ItemAry)
-	if lens <= 0 {
-		return
-	}
-	return ItemAry[rand.Intn(lens)], true
+	return ItemAry[idx]
 }

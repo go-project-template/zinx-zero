@@ -2,10 +2,11 @@
 package cfg
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/fsnotify/fsnotify"
-	"github.com/spf13/viper"
-	"math/rand"
+	"os"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type DemoObj struct {
@@ -23,58 +24,45 @@ type Demo struct {
 	Obj     map[int32]DemoObj `json:"obj"`     // 对象
 }
 
-var DemoMap map[int32]Demo
-var DemoAry []Demo
+var DemoMap map[int32]*Demo
+var DemoAry []*Demo
 
 func initDemo() {
-	v := viper.New()
-	v.SetConfigFile("./conf/game/Demo.json")
-	v.SetConfigType("json")
-	err := v.ReadInConfig()
+	fileName := "./conf/game/Demo.json"
+	bytes, err := os.ReadFile(fileName)
 	if err != nil {
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
-	v.WatchConfig()
-
-	v.OnConfigChange(func(e fsnotify.Event) {
-		if err := v.Unmarshal(&DemoMap); err != nil {
-			fmt.Println(err)
-		}
-	})
-	if err := v.Unmarshal(&DemoMap); err != nil {
+	if err := json.Unmarshal(bytes, &DemoMap); err != nil {
 		panic(err)
 	}
-	DemoAry = make([]Demo, 0, len(DemoMap))
+	DemoAry = make([]*Demo, 0, len(DemoMap))
 	for _, item := range DemoMap {
 		DemoAry = append(DemoAry, item)
 	}
 }
 
-func GetDemoMap() map[int32]Demo {
+func GetDemoMap() map[int32]*Demo {
 	return DemoMap
 }
 
-func GetDemoAry() []Demo {
+func GetDemoAry() []*Demo {
 	return DemoAry
 }
 
-func GetDemoByID(id int32) (Demo, bool) {
-	item, ok := DemoMap[id]
-	return item, ok
+func GetDemoByID(id int32) (item *Demo) {
+	item = DemoMap[id]
+	if item == nil {
+		logx.Errorf("GetDemoByID fail: %d ", id)
+	}
+	return item
 }
 
-func GetDemoByIndex(idx int) (item Demo, ok bool) {
+func GetDemoByIndex(idx int) (item *Demo) {
 	lens := len(DemoAry)
 	if lens <= 0 || idx >= lens {
-		return
+		logx.Errorf("GetDemoByIndex fail: %d ", idx)
+		return nil
 	}
-	return DemoAry[idx], true
-}
-
-func GetRandDemo() (item Demo, ok bool) {
-	lens := len(DemoAry)
-	if lens <= 0 {
-		return
-	}
-	return DemoAry[rand.Intn(lens)], true
+	return DemoAry[idx]
 }

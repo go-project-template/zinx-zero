@@ -4,7 +4,14 @@ option go_package = "./msg";
 
 package msg;
 
-import "proto/common.proto";
+enum EnumPlayerIntAttr {
+  PlayerIntAttr_None = 0;
+  PlayerIntAttr_ItemId = 1;
+}
+enum EnumPlayerStrAttr {
+  PlayerStrAttr_None = 0;
+  PlayerStrAttr_ItemId = 1;
+}
 
 message DBPlayer {
   int64 RoleId = 1;

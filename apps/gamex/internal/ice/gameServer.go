@@ -6,9 +6,7 @@ import (
 	"github.com/zeromicro/go-zero/core/service"
 )
 
-type (
-	IGameServer interface {
-		service.Service
-		GetServiceContext() *svc.ServiceContext
-	}
-)
+type IGameServer interface {
+	service.Service
+	GetServiceContext() *svc.ServiceContext
+}
