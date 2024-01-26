@@ -28,8 +28,10 @@ func (a *playerImpl) addItemByItemId(itemId int32, changeCount int64,
 			if code != msg.EnumCode_Code_Success {
 				return
 			}
+			a.DBPlayerBag.ItemList = append(a.DBPlayerBag.ItemList, itemInfo)
 		}
-
+		code = msg.EnumCode_Code_Success
+		return
 	default:
 		code = msg.EnumCode_Code_Item_UnknowStackType
 		return
@@ -39,7 +41,9 @@ func (a *playerImpl) addItemByItemId(itemId int32, changeCount int64,
 		if code != msg.EnumCode_Code_Success {
 			return
 		}
+		a.DBPlayerBag.ItemList = append(a.DBPlayerBag.ItemList, itemInfo)
 	}
+	itemInfo.ItemCount += changeCount
 	code = msg.EnumCode_Code_Success
 	return
 }
@@ -92,9 +96,9 @@ func (a *playerImpl) createItemByItemId(itemId int32) (itemInfo *msg.ItemInfo, c
 		return
 	}
 	// 道具唯一id自增
-	autoItemId := a.getIntAttr(int32(msg.Enum_PlayerIntAttr_PlayerIntAttr_ItemId))
+	autoItemId := a.getIntAttr(int32(msg.EnumPlayerIntAttr_PlayerIntAttr_ItemId))
 	autoItemId += 1
-	a.setIntAttr(int32(msg.Enum_PlayerIntAttr_PlayerIntAttr_ItemId), autoItemId)
+	a.setIntAttr(int32(msg.EnumPlayerIntAttr_PlayerIntAttr_ItemId), autoItemId)
 	itemInfo = &msg.ItemInfo{
 		UniqueId:  cast.ToInt64(cast.ToString(a.getRoleId()) + cast.ToString(autoItemId)),
 		ItemId:    itemId,
