@@ -1,11 +1,41 @@
 package player
 
 import (
+	"github.com/zeromicro/go-zero/core/logx"
+	"zinx-zero/apps/acommon/acfg"
 	"zinx-zero/apps/acommon/cfg"
 	"zinx-zero/apps/gamex/proto/msg"
 
 	"github.com/spf13/cast"
 )
+
+func (a *playerImpl) addItemByItemInfo(itemInfo *msg.ItemInfo) {
+	a.DBPlayerBag.ItemList = append(a.DBPlayerBag.ItemList, itemInfo)
+}
+
+// 添加可叠加的道具
+func (a *playerImpl) addStackableItem(cfgItem *cfg.Cfg_Item, changeCount int64) (code msg.EnumCode) {
+	code = msg.EnumCode_Code_Fail
+	itemId := cfgItem.Id
+	var itemInfo = a.getItemByItemId(itemId)
+	//创建新的道具
+	if itemInfo == nil {
+		itemInfo, code = a.createItemByItemId(itemId)
+		if code != msg.EnumCode_Code_Success {
+			return
+		}
+		a.addItemByItemInfo(itemInfo)
+	}
+	// 检查是否达到叠加上限
+	if itemInfo.GetCount()+changeCount > cfgItem.StackSize {
+		code = msg.EnumCode_Code_Item_ExceedStackSize
+		return
+	}
+	itemInfo.Count += changeCount
+	code = msg.EnumCode_Code_Success
+	logx.Debugf("添加道具成功", logx.Field("info", itemInfo.String()))
+	return
+}
 
 func (a *playerImpl) addItemByItemId(itemId int32, changeCount int64,
 	changeType msg.EnumItemChangeType) (code msg.EnumCode) {
@@ -13,22 +43,22 @@ func (a *playerImpl) addItemByItemId(itemId int32, changeCount int64,
 	if changeCount <= 0 {
 		return
 	}
-	cfgItem := cfg.GetItemByID(itemId)
+	cfgItem := cfg.GetCfg_ItemById(itemId)
 	if cfgItem == nil {
 		code = msg.EnumCode_Code_Item_NotExist
 		return
 	}
-	var itemInfo *msg.ItemInfo
 	switch cfgItem.StackType {
-	case cfg.Item_StackType_Stackable:
-		itemInfo = a.getItemByItemId(itemId)
-	case cfg.Item_StackType_NoStackable:
+	case acfg.Item_StackType_Stackable:
+		code = a.addStackableItem(cfgItem, changeCount)
+	case acfg.Item_StackType_NoStackable:
 		for i := 0; i < int(changeCount); i++ {
-			itemInfo, code = a.createItemByItemId(itemId)
+			itemInfo, code := a.createItemByItemId(itemId)
 			if code != msg.EnumCode_Code_Success {
-				return
+				return code
 			}
-			a.DBPlayerBag.ItemList = append(a.DBPlayerBag.ItemList, itemInfo)
+			a.addItemByItemInfo(itemInfo)
+			logx.Debugf("添加道具成功", logx.Field("info", itemInfo.String()))
 		}
 		code = msg.EnumCode_Code_Success
 		return
@@ -36,23 +66,14 @@ func (a *playerImpl) addItemByItemId(itemId int32, changeCount int64,
 		code = msg.EnumCode_Code_Item_UnknowStackType
 		return
 	}
-	if itemInfo == nil {
-		itemInfo, code = a.createItemByItemId(itemId)
-		if code != msg.EnumCode_Code_Success {
-			return
-		}
-		a.DBPlayerBag.ItemList = append(a.DBPlayerBag.ItemList, itemInfo)
-	}
-	itemInfo.ItemCount += changeCount
-	code = msg.EnumCode_Code_Success
 	return
 }
 
-func (a *playerImpl) delItemByItemId(itemId int32, changeCount int64, changeType msg.ItemChangeType) {
+func (a *playerImpl) delItemByItemId(itemId int32, changeCount int64, changeType msg.EnumItemChangeType) {
 	panic("unimplemented")
 }
 
-func (a *playerImpl) delItemByUniqueId(uniqueId int64, changeCount int64, changeType msg.ItemChangeType) {
+func (a *playerImpl) delItemByUniqueId(uniqueId int64, changeCount int64, changeType msg.EnumItemChangeType) {
 	panic("unimplemented")
 }
 
@@ -71,7 +92,7 @@ func (a *playerImpl) getItemByUniqueId(uniqueId int64) (itemInfo *msg.ItemInfo) 
 
 func (a *playerImpl) getItemByItemId(itemId int32) (itemInfo *msg.ItemInfo) {
 	for _, v := range a.GetDBPlayerBag().GetItemList() {
-		if itemId == v.GetItemId() {
+		if itemId == v.GetCfgItemId() {
 			itemInfo = v
 			break
 		}
@@ -81,7 +102,7 @@ func (a *playerImpl) getItemByItemId(itemId int32) (itemInfo *msg.ItemInfo) {
 
 func (a *playerImpl) getItemListByItemId(itemId int32) (itemInfoList []*msg.ItemInfo) {
 	for _, v := range a.GetDBPlayerBag().GetItemList() {
-		if itemId == v.GetItemId() {
+		if itemId == v.GetCfgItemId() {
 			itemInfoList = append(itemInfoList, v)
 			break
 		}
@@ -90,7 +111,7 @@ func (a *playerImpl) getItemListByItemId(itemId int32) (itemInfoList []*msg.Item
 }
 
 func (a *playerImpl) createItemByItemId(itemId int32) (itemInfo *msg.ItemInfo, code msg.EnumCode) {
-	cfgItem := cfg.GetItemByID(itemId)
+	cfgItem := cfg.GetCfg_ItemById(itemId)
 	if cfgItem == nil {
 		code = msg.EnumCode_Code_Item_NotExist
 		return
@@ -101,8 +122,8 @@ func (a *playerImpl) createItemByItemId(itemId int32) (itemInfo *msg.ItemInfo, c
 	a.setIntAttr(int32(msg.EnumPlayerIntAttr_PlayerIntAttr_ItemId), autoItemId)
 	itemInfo = &msg.ItemInfo{
 		UniqueId:  cast.ToInt64(cast.ToString(a.getRoleId()) + cast.ToString(autoItemId)),
-		ItemId:    itemId,
-		ItemCount: 0,
+		CfgItemId: itemId,
+		Count:     0,
 	}
 	code = msg.EnumCode_Code_Success
 	return

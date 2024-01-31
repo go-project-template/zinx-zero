@@ -2,6 +2,6 @@
 package cfg
 
 func InitAll() {
-	initDemo()
-	initItem()
+	initCfg_PlayerBag()
+	initCfg_Item()
 }

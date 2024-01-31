@@ -1,4 +1,4 @@
-package cfg
+package acfg
 
 const (
 	Item_StackType_Stackable   = 1 //可叠加

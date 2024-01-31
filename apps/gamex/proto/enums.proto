@@ -10,9 +10,11 @@ enum EnumCode {
   Code_Fail = 2;
 
   // --背包道具
-  Code_Item_NotEnough = 1001;       //道具不足
-  Code_Item_NotExist = 1002;        //道具不存在
-  Code_Item_UnknowStackType = 1003; //道具未知的叠加类型
+  Code_Item_NotEnough = 1001;        //道具不足
+  Code_Item_NotExist = 1002;         //道具不存在
+  Code_Item_UnknowStackType = 1003;  //道具未知的叠加类型
+  Code_Item_ExceedStackSize = 1004; //道具超出叠加上限
+  Code_Item_ExceedBagSize = 1005;   //道具超出背包上限
 }
 
 enum EnumItemChangeType { ItemChangeType_None = 0; }

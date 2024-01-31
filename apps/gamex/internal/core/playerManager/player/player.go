@@ -66,18 +66,18 @@ func (a *Player) GetRoleId() (roleId int64) {
 }
 
 // AddItemByItemId implements ice.IPlayer.
-func (a *Player) AddItemByItemId(itemId int32, changeCount int64, changeType msg.ItemChangeType) (code msg.Code) {
+func (a *Player) AddItemByItemId(itemId int32, changeCount int64, changeType msg.EnumItemChangeType) (code msg.EnumCode) {
 	a.DoWriteLock(func() { code = a.playerImpl.addItemByItemId(itemId, changeCount, changeType) })
 	return code
 }
 
 // DelItemByItemId implements ice.IPlayer.
-func (a *Player) DelItemByItemId(itemId int32, changeCount int64, changeType msg.ItemChangeType) {
+func (a *Player) DelItemByItemId(itemId int32, changeCount int64, changeType msg.EnumItemChangeType) {
 	panic("unimplemented")
 }
 
 // DelItemByUniqueId implements ice.IPlayer.
-func (a *Player) DelItemByUniqueId(uniqueId int64, changeCount int64, changeType msg.ItemChangeType) {
+func (a *Player) DelItemByUniqueId(uniqueId int64, changeCount int64, changeType msg.EnumItemChangeType) {
 	panic("unimplemented")
 }
 

@@ -9,53 +9,42 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
- {{- range .Structs}}
+// {{.FileName}} - {{.SheetName}}
 type {{.StructName}} struct {
     {{- range .Fields}}
-    {{- if eq .FieldName "Id" }}
+    {{- if eq .InServer true }}
+    {{.Name}}  {{.Type}} // {{.Desc}}
     {{- else }}
-    {{.FieldName}}  {{.FieldType}} `json:"{{.FieldJson}}"` // {{.FieldDesc}}
-    {{- end }} {{- end }}
-}
-{{- end }}
-
-type {{.StructName}} struct {
-    {{- range .Fields}}
-    {{- if eq .FieldType "bool" }}
-    {{.FieldName}}  *{{.FieldType}} `json:"{{.FieldJson}}"` // {{.FieldDesc}}
-    {{- else }}
-    {{.FieldName}}  {{.FieldType}} `json:"{{.FieldJson}}"` // {{.FieldDesc}}
     {{- end }} {{- end }}
 }
 
-var {{.StructName}}Map map[{{.IDType}}]*{{.StructName}}
-var {{.StructName}}Ary []*{{.StructName}}
+var _{{.StructName}}Map = make(map[{{.IdType}}]*{{.StructName}})
+var _{{.StructName}}Ary []*{{.StructName}}
 
 func init{{.StructName}}() {
-	fileName := "./conf/game/{{.StructName}}.json"
+	fileName := "./conf/excel/{{.StructName}}.json"
 	bytes, err := os.ReadFile(fileName)
 	if err != nil {
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
-	if err := json.Unmarshal(bytes, &{{.StructName}}Map); err != nil {
+	if err := json.Unmarshal(bytes, &_{{.StructName}}Ary); err != nil {
 		panic(err)
 	}
-	{{.StructName}}Ary = make([]*{{.StructName}}, 0, len({{.StructName}}Map))
-	for _, item := range {{.StructName}}Map {
-        {{.StructName}}Ary = append({{.StructName}}Ary, item)
-    }
+	for _, _{{.StructName}} := range _{{.StructName}}Ary {
+		_{{.StructName}}Map[_{{.StructName}}.Id] = _{{.StructName}}
+	}
 }
 
-func Get{{.StructName}}Map() map[{{.IDType}}]*{{.StructName}} {
-	return {{.StructName}}Map
+func Get{{.StructName}}Map() map[{{.IdType}}]*{{.StructName}} {
+	return _{{.StructName}}Map
 }
 
 func Get{{.StructName}}Ary() []*{{.StructName}} {
-	return {{.StructName}}Ary
+	return _{{.StructName}}Ary
 }
 
-func Get{{.StructName}}ByID(id {{.IDType}}) (item *{{.StructName}}) {
-	item = {{.StructName}}Map[id]
+func Get{{.StructName}}ById(id {{.IdType}}) (item *{{.StructName}}) {
+	item = _{{.StructName}}Map[id]
 	if item == nil {
 		logx.Errorf("Get{{.StructName}}ByID fail: %d ", id)
 	}
@@ -63,10 +52,10 @@ func Get{{.StructName}}ByID(id {{.IDType}}) (item *{{.StructName}}) {
 }
 
 func Get{{.StructName}}ByIndex(idx int) (item *{{.StructName}}) {
-	lens := len({{.StructName}}Ary)
+	lens := len(_{{.StructName}}Ary)
 	if lens <=0 || idx >= lens {
 		logx.Errorf("Get{{.StructName}}ByIndex fail: %d ", idx)
 	    return nil
 	}
-	return {{.StructName}}Ary[idx]
+	return _{{.StructName}}Ary[idx]
 }

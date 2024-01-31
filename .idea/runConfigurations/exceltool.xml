@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="exceltool" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="zinx-zero" />
+    <working_directory value="$PROJECT_DIR$/cmds/exceltool" />
+    <kind value="PACKAGE" />
+    <package value="zinx-zero/cmds/exceltool" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/cmds/exceltool/main.go" />
+    <method v="2" />
+  </configuration>
+</component>

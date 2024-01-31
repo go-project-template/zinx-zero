@@ -60,7 +60,8 @@ config:
 	cd cmds/exceltool && go run main.go && \
 	gofmt -w output && \
 	cp -r output/go/conf $(PROJECT_DIR)/apps/gamex/ && \
-	cp -r output/go/cfg $(PROJECT_DIR)/apps/acommon/ \
+	rm -r $(PROJECT_DIR)/apps/acommon/cfg && \
+	cp -r output/go/cfg $(PROJECT_DIR)/apps/acommon \
 	&& rm -r output
 
 api2:

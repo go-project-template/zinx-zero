@@ -39,9 +39,9 @@ type IPlayer interface {
 }
 
 type IPlayerBag interface {
-	AddItemByItemId(itemId int32, changeCount int64, changeType msg.ItemChangeType) (code msg.Code)
-	DelItemByItemId(itemId int32, changeCount int64, changeType msg.ItemChangeType)
-	DelItemByUniqueId(uniqueId int64, changeCount int64, changeType msg.ItemChangeType)
+	AddItemByItemId(itemId int32, changeCount int64, changeType msg.EnumItemChangeType) (code msg.EnumCode)
+	DelItemByItemId(itemId int32, changeCount int64, changeType msg.EnumItemChangeType)
+	DelItemByUniqueId(uniqueId int64, changeCount int64, changeType msg.EnumItemChangeType)
 	GetItemByUniqueId(uniqueId int64) (itemInfo *msg.ItemInfo)
 	GetItemByItemId(itemId int32) (itemInfo *msg.ItemInfo)
 	GetItemListByItemId(itemId int32) (itemInfoList []*msg.ItemInfo)
