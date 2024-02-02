@@ -5,8 +5,7 @@ option go_package = "./msg";
 package msg;
 
 message C2SLogin {
-  int64 AccountId = 1;
   string Token = 2;
-  string RoleId = 3;
+  int64 RoleId = 3;
 }
 message S2CLogin { int32 Tag = 1; }

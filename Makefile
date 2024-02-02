@@ -64,6 +64,7 @@ config:
 	cp -r output/go/cfg $(PROJECT_DIR)/apps/acommon \
 	&& rm -r output
 
+# goctl api ts -api *.api -dir=$(PROJECT_DIR)/ts
 api2:
 	cd apps/usercenter/api/desc && goctl api go -api *.api -dir=../ \
 	-home=$(PROJECT_DIR)/deploy/goctl/1.6.1/ --style=go_zero
