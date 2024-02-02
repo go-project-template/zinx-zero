@@ -28,7 +28,7 @@ ZinxConf:
   Mode: websocket
   RouterSlicesMode: true
   LogIsolationLevel: 1
-  HeartbeatMax: 10
+  HeartbeatMax: 30
 
 # my config
 

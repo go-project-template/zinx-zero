@@ -6,6 +6,8 @@ package msg;
 
 enum MsgId {
   MsgId_Placeholder = 0;
-  C2SLogin_ID = 1;
-  S2CLogin_ID = 2;
+  C2SPing_ID = 1;
+  S2CPong_ID = 2;
+  C2SLogin_ID = 3;
+  S2CLogin_ID = 4;
 }
