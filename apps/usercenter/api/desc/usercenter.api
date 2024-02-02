@@ -46,5 +46,9 @@ service usercenter {
 	@doc "create role"
 	@handler createRole
 	post /user/createRole (CreateRoleReq) returns (CreateRoleResp)
+
+	@doc "get role"
+	@handler getRoleInfo
+	post /user/getRoleInfo (GetRoleInfoReq) returns (GetRoleInfoResp)
 }
 

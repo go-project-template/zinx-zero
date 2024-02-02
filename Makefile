@@ -67,7 +67,8 @@ config:
 # goctl api ts -api *.api -dir=$(PROJECT_DIR)/ts
 api2:
 	cd apps/usercenter/api/desc && goctl api go -api *.api -dir=../ \
-	-home=$(PROJECT_DIR)/deploy/goctl/1.6.1/ --style=go_zero
+	-home=$(PROJECT_DIR)/deploy/goctl/1.6.1/ --style=go_zero && \
+	pwd && goctl api ts -api *.api -dir=$(PROJECT_DIR)/ts
 rpc2:
 	cd apps/usercenter/rpc/pb && \
 	goctl rpc protoc *.proto --go_out=../ --go-grpc_out=../ \

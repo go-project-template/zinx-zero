@@ -41,6 +41,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
+				Path:    "/user/getRoleInfo",
+				Handler: user.GetRoleInfoHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/user/wxMiniAuth",
 				Handler: user.WxMiniAuthHandler(serverCtx),
 			},

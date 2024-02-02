@@ -67,6 +67,12 @@ message CreateRoleReq {
 }
 message CreateRoleResp { int64 roleId = 1; }
 
+message GetRoleInfoReq { int64 accountId = 1; }
+message GetRoleInfoResp {
+  int64 roleId = 1;
+  string nickname = 2;
+}
+
 // service
 service usercenter {
   rpc login(LoginReq) returns (LoginResp);
@@ -78,4 +84,5 @@ service usercenter {
       returns (GetUserAuthyAccountIdResp);
   rpc generateToken(GenerateTokenReq) returns (GenerateTokenResp);
   rpc createRole(CreateRoleReq) returns (CreateRoleResp);
+  rpc getRoleInfo(GetRoleInfoReq) returns (GetRoleInfoResp);
 }

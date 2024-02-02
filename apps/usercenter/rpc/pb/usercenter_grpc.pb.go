@@ -26,6 +26,7 @@ const (
 	Usercenter_GetUserAuthByAccountId_FullMethodName = "/pb.usercenter/getUserAuthByAccountId"
 	Usercenter_GenerateToken_FullMethodName          = "/pb.usercenter/generateToken"
 	Usercenter_CreateRole_FullMethodName             = "/pb.usercenter/createRole"
+	Usercenter_GetRoleInfo_FullMethodName            = "/pb.usercenter/getRoleInfo"
 )
 
 // UsercenterClient is the client API for Usercenter service.
@@ -39,6 +40,7 @@ type UsercenterClient interface {
 	GetUserAuthByAccountId(ctx context.Context, in *GetUserAuthByAccountIdReq, opts ...grpc.CallOption) (*GetUserAuthyAccountIdResp, error)
 	GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...grpc.CallOption) (*GenerateTokenResp, error)
 	CreateRole(ctx context.Context, in *CreateRoleReq, opts ...grpc.CallOption) (*CreateRoleResp, error)
+	GetRoleInfo(ctx context.Context, in *GetRoleInfoReq, opts ...grpc.CallOption) (*GetRoleInfoResp, error)
 }
 
 type usercenterClient struct {
@@ -112,6 +114,15 @@ func (c *usercenterClient) CreateRole(ctx context.Context, in *CreateRoleReq, op
 	return out, nil
 }
 
+func (c *usercenterClient) GetRoleInfo(ctx context.Context, in *GetRoleInfoReq, opts ...grpc.CallOption) (*GetRoleInfoResp, error) {
+	out := new(GetRoleInfoResp)
+	err := c.cc.Invoke(ctx, Usercenter_GetRoleInfo_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UsercenterServer is the server API for Usercenter service.
 // All implementations must embed UnimplementedUsercenterServer
 // for forward compatibility
@@ -123,6 +134,7 @@ type UsercenterServer interface {
 	GetUserAuthByAccountId(context.Context, *GetUserAuthByAccountIdReq) (*GetUserAuthyAccountIdResp, error)
 	GenerateToken(context.Context, *GenerateTokenReq) (*GenerateTokenResp, error)
 	CreateRole(context.Context, *CreateRoleReq) (*CreateRoleResp, error)
+	GetRoleInfo(context.Context, *GetRoleInfoReq) (*GetRoleInfoResp, error)
 	mustEmbedUnimplementedUsercenterServer()
 }
 
@@ -150,6 +162,9 @@ func (UnimplementedUsercenterServer) GenerateToken(context.Context, *GenerateTok
 }
 func (UnimplementedUsercenterServer) CreateRole(context.Context, *CreateRoleReq) (*CreateRoleResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRole not implemented")
+}
+func (UnimplementedUsercenterServer) GetRoleInfo(context.Context, *GetRoleInfoReq) (*GetRoleInfoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRoleInfo not implemented")
 }
 func (UnimplementedUsercenterServer) mustEmbedUnimplementedUsercenterServer() {}
 
@@ -290,6 +305,24 @@ func _Usercenter_CreateRole_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Usercenter_GetRoleInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRoleInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsercenterServer).GetRoleInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Usercenter_GetRoleInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsercenterServer).GetRoleInfo(ctx, req.(*GetRoleInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Usercenter_ServiceDesc is the grpc.ServiceDesc for Usercenter service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -324,6 +357,10 @@ var Usercenter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "createRole",
 			Handler:    _Usercenter_CreateRole_Handler,
+		},
+		{
+			MethodName: "getRoleInfo",
+			Handler:    _Usercenter_GetRoleInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

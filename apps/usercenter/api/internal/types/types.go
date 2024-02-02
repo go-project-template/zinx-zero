@@ -10,6 +10,14 @@ type CreateRoleResp struct {
 	RoleId int64 `json:"role_id"`
 }
 
+type GetRoleInfoReq struct {
+}
+
+type GetRoleInfoResp struct {
+	RoleId   int64  `json:"role_id"`
+	Nickname string `json:"nickname"`
+}
+
 type LoginReq struct {
 	Mobile   string `json:"mobile" validate:"len=11"`
 	Password string `json:"password" validate:"min=6,max=100"`

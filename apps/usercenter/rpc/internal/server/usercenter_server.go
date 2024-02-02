@@ -56,3 +56,8 @@ func (s *UsercenterServer) CreateRole(ctx context.Context, in *pb.CreateRoleReq)
 	l := logic.NewCreateRoleLogic(ctx, s.svcCtx)
 	return l.CreateRole(in)
 }
+
+func (s *UsercenterServer) GetRoleInfo(ctx context.Context, in *pb.GetRoleInfoReq) (*pb.GetRoleInfoResp, error) {
+	l := logic.NewGetRoleInfoLogic(ctx, s.svcCtx)
+	return l.GetRoleInfo(in)
+}
